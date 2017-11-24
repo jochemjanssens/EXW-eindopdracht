@@ -6,7 +6,7 @@ En als je iets pew roept (of iets anders) dan schiet je.
 
 ## Noodzakelijke Elementen
 - Wereld
-- Vliegtuig vliegt rond
+- Vliegtuig vliegt rond, je kan maar in 2D vliegen
 - Je kan schieten
 - Obstakels
 - Collision detectie
@@ -18,8 +18,12 @@ En als je iets pew roept (of iets anders) dan schiet je.
 - Upgrades
 - Skins
 - Visual interface
+- Vliegen in 3D
 - Vind een tegenstander
 - Connectie met tegenstander
+
+## Technoligie
+- VR adhv. A-Frame (https://aframe.io/)
 
 ## Team
 - Dieter Van Hertbruggen

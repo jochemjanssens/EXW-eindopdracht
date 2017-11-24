@@ -16,7 +16,7 @@ const extractCSS = new ExtractTextWebpackPlugin(`css/style.css`);
 // change for production build on different server path
 const publicPath = `/`;
 
-const port = 3000;
+const port = 4040;
 
 const copy = new CopyWebpackPlugin([{
   from: `./src/assets`,
@@ -168,7 +168,7 @@ const config = {
 
     ifDevelopment(new HotModuleReplacementPlugin()),
 
-    
+
 
     ifProduction(copy),
     ifProduction(extractCSS),
