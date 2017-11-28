@@ -9,9 +9,8 @@
 </head>
 
 <body>
-  <a-scene stats >
+  <a-scene stats>
     <a-camera></a-camera>
-
     <a-entity class="parent" position="0 0 0">
       <!--<a-entity class="box" geometry="primitive: box" material="color: red" position="-5 0 0"></a-entity>
       <a-entity class="box" geometry="primitive: box" material="color: green" position="5 0 0"></a-entity>
@@ -19,9 +18,9 @@
       <a-entity class="box" geometry="primitive: box" material="color: blue" position="0 0 -5"></a-entity>-->
 
     </a-entity>
-    <a-plane position="0 -1 0" rotation="-90 0 0" width="200" height="200" color="#7BC8A4"></a-plane>
+  <!--  <a-plane position="0 -1 0" rotation="-90 0 0" width="1000" height="1000" color="#7BC8A4"></a-plane>-->
 
-    <a-sky color="#555"></a-sky>
+    <a-sky color="#444"></a-sky>
 
   </a-scene>
 
@@ -39,7 +38,7 @@
       //zorg ervoor dat je jezelf kan voorbereiden
       setTimeout(() => {
         update();
-      }, 5000);
+      }, 3000);
     }
 
     let counter = 0;
@@ -50,17 +49,23 @@
       generateNewBox();
 
       const changes = calculateMovement();
-      document.querySelectorAll('a-box').forEach(box=>{
+
+    //  const ground = document.querySelector('a-plane');
+      //const groundposition = ground.getAttribute('position');
+    //  ground.setAttribute('position', `0 ${groundposition.y - changes.yChange} 0`);
+
+      document.querySelectorAll('a-sphere').forEach(box=>{
         const position = box.getAttribute('position');
         if(position){
           const boxChange = calculateBoxChange(box.classList[0]);
-          box.setAttribute('position', `${position.x + boxChange.xChange + changes.xChange} ${positionY} ${position.z + boxChange.zChange + changes.zChange}`);
-          if(position.x > 50 || position.z > 50 || position.x < -50 || position.z < -50){
+          box.setAttribute('position', `${position.x + boxChange.xChange + changes.xChange} ${position.y - changes.yChange} ${position.z + boxChange.zChange + changes.zChange}`);
+
+          if(position.x > 100 || position.z > 100 || position.x < -100 || position.z < -100 || position.y > 100 || position.y < -100){
             box.parentNode.removeChild(box);
           }
 
-          if(position.x < 1 && position.x > -1 && position.z < 1 && position.z > -1){
-            console.log('collison');
+          if(position.x < 1 && position.x > -1 && position.z < 1 && position.z > -1 && position.y < 1 && position.y > -1){
+            console.log(box.classList[0]);
             dead = true;
           }
         }
@@ -72,21 +77,27 @@
     }
 
     const generateNewBox = () => {
-      const box = document.createElement('a-box');
-      box.setAttribute('color', `blue`);
+      const box = document.createElement('a-sphere');
+      //box.setAttribute('color', `blue`);
+      box.setAttribute('src', 'https://i.imgur.com/mYmmbrp.jpg');
+
       const direction = Math.floor(Math.random()*360);
       box.classList.add(direction);
 
+      const height = Math.floor(Math.random()*200)-100;
+
+      const size = Math.floor(Math.random()*2)+1;
+      box.setAttribute('radius', size);
 
       const position = Math.floor(Math.random()*4);
       if(position === 0){
-        box.setAttribute('position', `50 0 ${(Math.random()*100)-50}`);
+        box.setAttribute('position', `100 ${height} ${(Math.random()*200)-100}`);
       }else if(position === 1){
-        box.setAttribute('position', `-50 0 ${(Math.random()*100)-50}`);
+        box.setAttribute('position', `-100 ${height} ${(Math.random()*200)-100}`);
       }else if(position === 2){
-        box.setAttribute('position', `${(Math.random()*100)-50} 0 -50`);
+        box.setAttribute('position', `${(Math.random()*200)-100} ${height} -100`);
       }else{
-        box.setAttribute('position', `${(Math.random()*100)-50} 0 50`);
+        box.setAttribute('position', `${(Math.random()*200)-100} ${height} 100`);
       }
 
       document.querySelector('.parent').appendChild(box);
@@ -94,7 +105,7 @@
 
     const calculateBoxChange = direction => {
 
-      const speed = 0.1;
+      const speed = 0.05;
 
       let xChange = 0;
       let zChange = 0;
@@ -146,8 +157,9 @@
     const calculateMovement = () => {
       const cameraPosition = document.querySelector('a-camera').components.rotation.data;
       const cameraPositionY = Math.floor(Math.abs(cameraPosition.y % 360));
+      const cameraPositionX = Math.floor(cameraPosition.x%360);
 
-      const speed = 0.3;
+      const speed = 0.2
 
       let xChange = 0;
       let zChange = 0;
@@ -190,9 +202,12 @@
         xChange = -((360-cameraPositionY)/90*speed)
       }
 
+      const yChange = (cameraPositionX/90);
+
       return {
         "xChange": xChange,
-        "zChange": zChange
+        "zChange": zChange,
+        "yChange": yChange
       };
     }
 
