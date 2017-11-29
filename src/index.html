@@ -10,17 +10,18 @@
 
 <body>
   <a-scene stats>
-    <a-camera></a-camera>
+    <a-assets>
+        <img id="sky" src="https://img.gs/bbdkhfbzkk/2048x2048,stretch/http://i.imgur.com/WqlqEkq.jpg" crossorigin="anonymous" />
+      </a-assets>
+    <a-camera>
+      <a-plane height= "1" width= "2" position="0 -0.4 -1" src="assets/interface.png" transparent="true"></a-entity>
+
+    </a-camera>
     <a-entity class="parent" position="0 0 0">
-      <!--<a-entity class="box" geometry="primitive: box" material="color: red" position="-5 0 0"></a-entity>
-      <a-entity class="box" geometry="primitive: box" material="color: green" position="5 0 0"></a-entity>
-      <a-entity class="box" geometry="primitive: box" material="color: yellow" position="0 0 5"></a-entity>
-      <a-entity class="box" geometry="primitive: box" material="color: blue" position="0 0 -5"></a-entity>-->
 
     </a-entity>
-  <!--  <a-plane position="0 -1 0" rotation="-90 0 0" width="1000" height="1000" color="#7BC8A4"></a-plane>-->
 
-    <a-sky color="#444"></a-sky>
+    <a-sky src="#sky" rotation="0 -90 0"></a-sky>
 
   </a-scene>
 
@@ -35,6 +36,8 @@
         generateNewBox();
       }
 
+      checkAudio();
+
       //zorg ervoor dat je jezelf kan voorbereiden
       setTimeout(() => {
         update();
@@ -43,16 +46,47 @@
 
     let counter = 0;
     let dead = false;
+    let analyser, frequencyArray;
     const parent = document.querySelectorAll('.parent');
+
+    const checkAudio = () => {
+      navigator.getUserMedia({audio:true}, soundAllowed, soundNotAllowed);
+    }
+
+    var soundAllowed = function (stream) {
+        //Audio stops listening in FF without // window.persistAudioStream = stream;
+        //https://bugzilla.mozilla.org/show_bug.cgi?id=965483
+        //https://support.mozilla.org/en-US/questions/984179
+        window.persistAudioStream = stream;
+        var audioContent = new AudioContext();
+        var audioStream = audioContent.createMediaStreamSource( stream );
+        analyser = audioContent.createAnalyser();
+        audioStream.connect(analyser);
+        analyser.fftSize = 1024;
+        frequencyArray = new Uint8Array(analyser.frequencyBinCount);
+    }
+
+    var soundNotAllowed = function (error) {
+        console.log(error);
+    }
+
+    let isShooting = false;
 
     const update = () => {
       generateNewBox();
 
-      const changes = calculateMovement();
+      let soundValue = 0;
+      analyser.getByteFrequencyData(frequencyArray);
 
-    //  const ground = document.querySelector('a-plane');
-      //const groundposition = ground.getAttribute('position');
-    //  ground.setAttribute('position', `0 ${groundposition.y - changes.yChange} 0`);
+      //console.log(soundValue);
+      if(frequencyArray[0] > 50 && isShooting === false){
+        console.log('pang');
+        isShooting = true;
+      }else if(frequencyArray[0] < 50 && isShooting === true){
+        isShooting = false;
+      }
+
+      const changes = calculateMovement();
 
       document.querySelectorAll('a-sphere').forEach(box=>{
         const position = box.getAttribute('position');
@@ -81,12 +115,13 @@
       //box.setAttribute('color', `blue`);
       box.setAttribute('src', 'https://i.imgur.com/mYmmbrp.jpg');
 
+
       const direction = Math.floor(Math.random()*360);
       box.classList.add(direction);
 
       const height = Math.floor(Math.random()*200)-100;
 
-      const size = Math.floor(Math.random()*2)+1;
+      const size = Math.floor(Math.random()*3)+1;
       box.setAttribute('radius', size);
 
       const position = Math.floor(Math.random()*4);
