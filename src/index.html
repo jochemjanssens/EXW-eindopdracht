@@ -9,12 +9,13 @@
 </head>
 
 <body>
-  <a-scene>
+  <a-scene stats>
     <a-assets>
-        <img id="sky" src="assets/world.jpg" crossorigin="anonymous" />
+        <img id="sky" src="./assets/world.jpg" crossorigin="anonymous" />
       </a-assets>
     <a-camera>
-      <a-plane height= "1" width= "2" position="0 -0.4 -1" src="assets/interface.png" transparent="true"></a-entity>
+      <a-text value="Score: 0" position="0 -1 -2"></a-text>
+      <a-plane height= "1" width= "2" position="0 -0.4 -1" src="./assets/interface.png" transparent="true"></a-entity>
     </a-camera>
     <a-entity class="parent" position="0 0 0">
 

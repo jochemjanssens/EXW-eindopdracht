@@ -1,11 +1,14 @@
+let textElement;
+
 const init = () => {
   for (let i = 0;i < 50;i ++) {
     generateNewBox();
   }
 
+  textElement = document.querySelector(`a-text`);
+
   checkAudio();
 
-  //zorg ervoor dat je jezelf kan voorbereiden
   setTimeout(() => {
     update();
   }, 3000);
@@ -14,6 +17,7 @@ const init = () => {
 let dead = false;
 let analyser, frequencyArray;
 let isShooting = false;
+let score = 0;
 
 const checkAudio = () => {
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
@@ -42,7 +46,7 @@ const update = () => {
     analyser.getByteFrequencyData(frequencyArray);
     if (frequencyArray[0] > 50 && isShooting === false) {
       shoot(changes);
-      console.log(`shoot`);
+      console.log(`schiet`);
       isShooting = true;
     } else if (frequencyArray[0] < 50 && isShooting === true) {
       isShooting = false;
@@ -52,27 +56,29 @@ const update = () => {
   document.querySelectorAll(`.bullet`).forEach(bullet => {
     const position = bullet.getAttribute(`position`);
     if (position) {
-      bullet.setAttribute(`position`, `${position.x - (bullet.dataset.xChange * 2)} ${position.y + (bullet.dataset.yChange * 2)} ${position.z - (bullet.dataset.zChange * 2)}`);
+      bullet.setAttribute(`position`, `${position.x - (bullet.dataset.xChange * 8)} ${position.y + (bullet.dataset.yChange * 8)} ${position.z - (bullet.dataset.zChange * 8)}`);
 
       if (position.x > 100 || position.z > 100 || position.x < - 100 || position.z < - 100 || position.y > 100 || position.y < - 100) {
         bullet.parentNode.removeChild(bullet);
       }
 
       //😰 collision detection
-      document.querySelectorAll(`a-sphere`).forEach(box => {
+      document.querySelectorAll(`.planet`).forEach(box => {
         const positionPlanet = box.getAttribute(`position`);
         if (positionPlanet) {
           if (position.x < positionPlanet.x + 3 &&  position.x > positionPlanet.x - 3  && position.y < positionPlanet.y + 3 &&  position.y > positionPlanet.y - 3 && position.z < positionPlanet.z + 3 &&  position.z > positionPlanet.z - 3) {
             console.log(`raak`);
-            box.setAttribute(`color`, `red`);
-            //box.parentNode.removeChild(box);
+            score += 1;
+            textElement.setAttribute(`value`, `Score: ${score}`);
+            box.parentNode.removeChild(box);
+            bullet.parentNode.removeChild(bullet);
           }
         }
       });
     }
   });
 
-  document.querySelectorAll(`a-sphere`).forEach(box => {
+  document.querySelectorAll(`.planet`).forEach(box => {
     const position = box.getAttribute(`position`);
     if (position) {
       const boxChange = calculateBoxChange(box.classList[0]);
@@ -95,11 +101,9 @@ const update = () => {
 };
 
 const shoot = direction => {
-  const bullet = document.createElement(`a-box`);
-  bullet.setAttribute(`color`, `blue`);
-  bullet.setAttribute(`width`, `0.4`);
-  bullet.setAttribute(`height`, `0.4`);
-  bullet.setAttribute(`depth`, `0.4`);
+  const bullet = document.createElement(`a-sphere`);
+  bullet.setAttribute(`color`, `#FC0D1C`);
+  bullet.setAttribute(`radius`, `0.3`);
 
   bullet.classList.add(`bullet`);
   bullet.dataset.xChange = direction.xChange;
@@ -115,11 +119,11 @@ const generateNewBox = () => {
 
   const direction = Math.floor(Math.random() * 360);
   box.classList.add(direction);
+  box.classList.add(`planet`);
 
   const height = Math.floor(Math.random() * 200) - 100;
 
-  const size = Math.floor(Math.random() * 3) + 1;
-  box.setAttribute(`radius`, size);
+  box.setAttribute(`radius`, 3);
 
   const position = Math.floor(Math.random() * 4);
   if (position === 0) {
@@ -137,7 +141,7 @@ const generateNewBox = () => {
 
 const calculateBoxChange = direction => {
 
-  const speed = 0.05;
+  const speed = 0.3;
 
   let xChange = 0;
   let zChange = 0;
@@ -191,7 +195,7 @@ const calculateMovement = () => {
   const cameraPositionY = Math.floor(Math.abs(cameraPosition.y % 360));
   const cameraPositionX = Math.floor(cameraPosition.x % 360);
 
-  const speed = 0.2;
+  const speed = 0.5;
 
   let xChange = 0;
   let zChange = 0;
