@@ -1,17 +1,32 @@
 let textElement;
+let centertext;
 
 const init = () => {
   for (let i = 0;i < 50;i ++) {
     generateNewBox();
   }
 
-  textElement = document.querySelector(`a-text`);
+  textElement = document.querySelector(`.score`);
+  centertext = document.querySelector(`.centertext`);
+
 
   checkAudio();
 
   setTimeout(() => {
-    update();
-  }, 3000);
+    const vrbutton = document.querySelector(`.a-enter-vr-button`);
+    console.log(vrbutton);
+    vrbutton.addEventListener(`mousedown`, startgame);
+  }, 0);
+};
+
+let count = 7;
+let timer;
+const startgame = () => {
+  console.log(`start`);
+  timer = setInterval(function() {
+    handleTimer(count);
+  }, 1000);
+
 };
 
 let dead = false;
@@ -37,6 +52,19 @@ const soundAllowed = stream => {
 const soundNotAllowed = error => {
   console.log(error);
 };
+
+function handleTimer() {
+  if (count === - 1) {
+    clearInterval(timer);
+    centertext.setAttribute(`value`, ``);
+    update();
+  } else if (count === 0) {
+    centertext.setAttribute(`value`, `go`);
+  } else {
+    centertext.setAttribute(`value`, count);
+  }
+  count --;
+}
 
 const update = () => {
   generateNewBox();
@@ -89,7 +117,8 @@ const update = () => {
       }
 
       if (position.x < 3 && position.x > - 3 && position.z < 3 && position.z > - 3 && position.y < 3 && position.y > - 3) {
-        console.log(box.classList[0]);
+        box.parentNode.removeChild(box);
+        centertext.setAttribute(`value`, `dood`);
         dead = true;
       }
     }
@@ -195,7 +224,7 @@ const calculateMovement = () => {
   const cameraPositionY = Math.floor(Math.abs(cameraPosition.y % 360));
   const cameraPositionX = Math.floor(cameraPosition.x % 360);
 
-  const speed = 0.5;
+  const speed = 1;
 
   let xChange = 0;
   let zChange = 0;

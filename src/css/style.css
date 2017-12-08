@@ -11,3 +11,22 @@ body {
   margin: 2rem;
   position: relative;
 }
+
+.overlay {
+  position: absolute;
+  z-index: 3;
+  color: white;
+  background-color: rgba(0, 0, 0, .8);
+
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.a-enter-vr-button {
+  right: calc(50% - 28px);
+}

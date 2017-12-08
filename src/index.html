@@ -9,24 +9,27 @@
 </head>
 
 <body>
-  <a-scene stats>
+  <div class="overlay">
+    <header>
+      <h1>Titel</h1>
+    </header>
+    <p>Beetje uitleg over wat en hoe</p>
+    <p>druk op de knop om te starten</p>
+  </div>
+  <a-scene>
     <a-assets>
         <img id="sky" src="./assets/world.jpg" crossorigin="anonymous" />
       </a-assets>
     <a-camera>
-      <a-text value="Score: 0" position="0 -1 -2"></a-text>
-      <a-plane height= "1" width= "2" position="0 -0.4 -1" src="./assets/interface.png" transparent="true"></a-entity>
+      <a-text class="centertext" value="" position="0 0 -.5" align="center"></a-text>
+      <a-text class="score" value="Score: 0" position="-.15 -.55 -1" scale=".3 .3"></a-text>
+      <a-plane height= "1" width= "2" position="0 -0.2 -1" src="./assets/interface.png" transparent="true"></a-entity>
     </a-camera>
     <a-entity class="parent" position="0 0 0">
 
     </a-entity>
-
     <a-sky src="#sky" rotation="0 -90 0"></a-sky>
   </a-scene>
-
-  <script type="text/javascript">
-
-  </script>
 </body>
 
 </html>
