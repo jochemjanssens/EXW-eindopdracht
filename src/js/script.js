@@ -1,6 +1,26 @@
 let textElement;
 let centertext;
 
+let count = 7;
+let timer;
+
+let dead = false;
+let analyser, frequencyArray;
+let isShooting = false;
+let score = 0;
+
+const restart = () => {
+  count = 3;
+  dead = false;
+  score = 0;
+
+  document.querySelectorAll(`.bullet`).forEach(bullet => {
+    bullet.parentNode.removeChild(bullet);
+  });
+
+  startgame();
+};
+
 const init = () => {
   for (let i = 0;i < 50;i ++) {
     generateNewBox();
@@ -8,7 +28,6 @@ const init = () => {
 
   textElement = document.querySelector(`.score`);
   centertext = document.querySelector(`.centertext`);
-
 
   checkAudio();
 
@@ -19,8 +38,6 @@ const init = () => {
   }, 0);
 };
 
-let count = 7;
-let timer;
 const startgame = () => {
   console.log(`start`);
   timer = setInterval(function() {
@@ -28,11 +45,6 @@ const startgame = () => {
   }, 1000);
 
 };
-
-let dead = false;
-let analyser, frequencyArray;
-let isShooting = false;
-let score = 0;
 
 const checkAudio = () => {
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
@@ -120,6 +132,11 @@ const update = () => {
         box.parentNode.removeChild(box);
         centertext.setAttribute(`value`, `dood`);
         dead = true;
+
+        setTimeout(() => {
+          console.log(`restart`);
+          restart();
+        }, 1000);
       }
     }
   });
