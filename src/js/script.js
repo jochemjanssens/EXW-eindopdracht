@@ -119,6 +119,14 @@ const update = () => {
   });
 
   document.querySelectorAll(`.planet`).forEach(box => {
+    const scale = box.getAttribute(`scale`);
+    if (scale) {
+      if (scale.x <= 1) {
+        const newScale = scale.x + 0.24;
+        box.setAttribute(`scale`, `${newScale} ${newScale} ${newScale}`);
+      }
+    }
+
     const position = box.getAttribute(`position`);
     if (position) {
       const boxChange = calculateBoxChange(box.classList[0]);
@@ -160,7 +168,7 @@ const shoot = direction => {
 
 const generateNewBox = () => {
   const box = document.createElement(`a-sphere`);
-  box.setAttribute(`src`, `assets/texture.jpg`);
+  box.setAttribute(`src`, `#texture`);
 
 
   const direction = Math.floor(Math.random() * 360);
@@ -170,6 +178,9 @@ const generateNewBox = () => {
   const height = Math.floor(Math.random() * 200) - 100;
 
   box.setAttribute(`radius`, 3);
+
+  box.setAttribute(`scale`, `0 0 0`);
+
 
   const position = Math.floor(Math.random() * 4);
   if (position === 0) {
