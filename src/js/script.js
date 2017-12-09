@@ -1,5 +1,6 @@
 let textElement;
 let centertext;
+let speedtext;
 
 let count = 7;
 let timer;
@@ -9,10 +10,14 @@ let analyser, frequencyArray;
 let isShooting = false;
 let score = 0;
 
+
+let planespeed = 0.1;
+
 const restart = () => {
   count = 3;
   dead = false;
   score = 0;
+  planespeed = 0.1;
 
   document.querySelectorAll(`.bullet`).forEach(bullet => {
     bullet.parentNode.removeChild(bullet);
@@ -28,6 +33,7 @@ const init = () => {
 
   textElement = document.querySelector(`.score`);
   centertext = document.querySelector(`.centertext`);
+  speedtext = document.querySelector(`.speedtext`);
 
   checkAudio();
 
@@ -248,51 +254,54 @@ const calculateBoxChange = direction => {
 };
 
 const calculateMovement = () => {
+  if (planespeed < 3) {
+    planespeed += 0.01;
+    speedtext.setAttribute(`value`, Math.round(planespeed * 100) / 100);
+  }
+
   const cameraPosition = document.querySelector(`a-camera`).components.rotation.data;
   const cameraPositionY = Math.floor(Math.abs(cameraPosition.y % 360));
   const cameraPositionX = Math.floor(cameraPosition.x % 360);
-
-  const speed = 1;
 
   let xChange = 0;
   let zChange = 0;
 
   if (cameraPositionY === 0) {
     //Z++
-    zChange = speed;
+    zChange = planespeed;
     //X0
   } else if (cameraPositionY < 90) {
     //Z++
-    zChange = (90 - cameraPositionY) / 90 * speed;
+    zChange = (90 - cameraPositionY) / 90 * planespeed;
     //X++
-    xChange = cameraPositionY / 90 * speed;
+    xChange = cameraPositionY / 90 * planespeed;
   } else if (cameraPositionY === 90) {
     //Z0
     //X++
-    xChange = speed;
+    xChange = planespeed;
   } else if (cameraPositionY < 180) {
     //Z--
-    zChange = - ((cameraPositionY - 90) / 90 * speed);
+    zChange = - ((cameraPositionY - 90) / 90 * planespeed);
     //X++
-    xChange = (Math.abs(cameraPositionY - 180)) / 90 * speed;
+    xChange = (Math.abs(cameraPositionY - 180)) / 90 * planespeed;
   } else if (cameraPositionY === 180) {
     //Z--
-    zChange = - speed;
+    zChange = - planespeed;
     //X0
   } else if (cameraPositionY < 270) {
     //Z--
-    zChange = - ((270 - cameraPositionY) / 90 * speed);
+    zChange = - ((270 - cameraPositionY) / 90 * planespeed);
     //X--
-    xChange = - ((cameraPositionY - 180) / 90 * speed);
+    xChange = - ((cameraPositionY - 180) / 90 * planespeed);
   } else if (cameraPositionY === 270) {
     //Z0
     //X--
-    xChange = - speed;
+    xChange = - planespeed;
   } else if (cameraPositionY < 360) {
     //Z++
-    zChange = (cameraPositionY - 270) / 90 * speed;
+    zChange = (cameraPositionY - 270) / 90 * planespeed;
     //X--
-    xChange = - ((360 - cameraPositionY) / 90 * speed);
+    xChange = - ((360 - cameraPositionY) / 90 * planespeed);
   }
 
   const yChange = (cameraPositionX / 90);
