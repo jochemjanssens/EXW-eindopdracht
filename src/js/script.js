@@ -104,7 +104,7 @@ const update = () => {
     if (position) {
       bullet.setAttribute(`position`, `${position.x - (bullet.dataset.xChange * 8)} ${position.y + (bullet.dataset.yChange * 8)} ${position.z - (bullet.dataset.zChange * 8)}`);
 
-      if (position.x > 100 || position.z > 100 || position.x < - 100 || position.z < - 100 || position.y > 100 || position.y < - 100) {
+      if (position.x > 200 || position.z > 200 || position.x < - 200 || position.z < - 200 || position.y > 200 || position.y < - 200) {
         bullet.parentNode.removeChild(bullet);
       }
 
@@ -138,7 +138,7 @@ const update = () => {
       const boxChange = calculateBoxChange(box.classList[0]);
       box.setAttribute(`position`, `${position.x + boxChange.xChange + changes.xChange} ${position.y - changes.yChange} ${position.z + boxChange.zChange + changes.zChange}`);
 
-      if (position.x > 100 || position.z > 100 || position.x < - 100 || position.z < - 100 || position.y > 100 || position.y < - 100) {
+      if (position.x > 200 || position.z > 200 || position.x < - 200 || position.z < - 200 || position.y > 200 || position.y < - 200) {
         box.parentNode.removeChild(box);
       }
 
@@ -181,7 +181,7 @@ const generateNewBox = () => {
   box.classList.add(direction);
   box.classList.add(`planet`);
 
-  const height = Math.floor(Math.random() * 200) - 100;
+  const height = Math.floor(Math.random() * 400) - 200;
 
   box.setAttribute(`radius`, 3);
 
@@ -190,13 +190,13 @@ const generateNewBox = () => {
 
   const position = Math.floor(Math.random() * 4);
   if (position === 0) {
-    box.setAttribute(`position`, `100 ${height} ${(Math.random() * 200) - 100}`);
+    box.setAttribute(`position`, `200 ${height} ${(Math.random() * 400) - 200}`);
   } else if (position === 1) {
-    box.setAttribute(`position`, `-100 ${height} ${(Math.random() * 200) - 100}`);
+    box.setAttribute(`position`, `-200 ${height} ${(Math.random() * 400) - 200}`);
   } else if (position === 2) {
-    box.setAttribute(`position`, `${(Math.random() * 200) - 100} ${height} -100`);
+    box.setAttribute(`position`, `${(Math.random() * 400) - 200} ${height} -200`);
   } else {
-    box.setAttribute(`position`, `${(Math.random() * 200) - 100} ${height} 100`);
+    box.setAttribute(`position`, `${(Math.random() * 400) - 200} ${height} 200`);
   }
 
   document.querySelector(`.parent`).appendChild(box);
