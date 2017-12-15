@@ -1,6 +1,7 @@
-let textElement;
+let scoretext;
 let centertext;
 let speedtext;
+let highscoretext;
 
 let count = 7;
 let timer;
@@ -13,6 +14,7 @@ let score = 0;
 const PLANETSPAWNSPEED = 100;
 const STARTPLANETS = 50;
 const WORLDSIZE = 200;
+const MAXSPEED = 3;
 
 let maxPlanets = STARTPLANETS;
 let planespeed = 0.1;
@@ -40,9 +42,12 @@ const init = () => {
     maxPlanets ++;
   }, PLANETSPAWNSPEED);
 
-  textElement = document.querySelector(`.score`);
+  scoretext = document.querySelector(`.score`);
   centertext = document.querySelector(`.centertext`);
-  speedtext = document.querySelector(`.speedtext`);
+  speedtext = document.querySelector(`.speed`);
+  highscoretext = document.querySelector(`.highscore`);
+
+  checkHighscore();
 
   checkAudio();
 
@@ -101,7 +106,7 @@ const update = () => {
 
   const numberOfPlanets = document.querySelectorAll(`.planet`).length;
   if (numberOfPlanets < maxPlanets) {
-    console.log(numberOfPlanets);
+    //console.log(numberOfPlanets);
     generateNewBox(cameraPositionY);
   }
 
@@ -114,6 +119,8 @@ const update = () => {
       isShooting = false;
     }
   }
+
+  let firstrun = true;
 
   document.querySelectorAll(`.planet`).forEach(box => {
     const scale = box.getAttribute(`scale`);
@@ -138,6 +145,8 @@ const update = () => {
         centertext.setAttribute(`value`, `dood`);
         dead = true;
 
+        saveScore();
+
         setTimeout(() => {
           console.log(`restart`);
           restart();
@@ -147,7 +156,9 @@ const update = () => {
       document.querySelectorAll(`.bullet`).forEach(bullet => {
         const bulletposition = bullet.getAttribute(`position`);
         if (bulletposition) {
-          bullet.setAttribute(`position`, `${bulletposition.x - (bullet.dataset.xChange * 8)} ${bulletposition.y + (bullet.dataset.yChange * 8)} ${bulletposition.z - (bullet.dataset.zChange * 8)}`);
+          if (firstrun) {
+            bullet.setAttribute(`position`, `${bulletposition.x - (bullet.dataset.xChange * 8)} ${bulletposition.y + (bullet.dataset.yChange * 8)} ${bulletposition.z - (bullet.dataset.zChange * 8)}`);
+          }
 
           if (bulletposition.x > WORLDSIZE || bulletposition.z > WORLDSIZE || bulletposition.x < - WORLDSIZE || bulletposition.z < - WORLDSIZE || bulletposition.y > WORLDSIZE || bulletposition.y < - WORLDSIZE) {
             bullet.parentNode.removeChild(bullet);
@@ -157,12 +168,13 @@ const update = () => {
           if (bulletposition.x < position.x + 3 &&  bulletposition.x > position.x - 3  && bulletposition.y < position.y + 3 &&  bulletposition.y > position.y - 3 && bulletposition.z < position.z + 3 &&  bulletposition.z > position.z - 3) {
             console.log(`raak`);
             score += 1;
-            textElement.setAttribute(`value`, `Score: ${score}`);
+            scoretext.setAttribute(`value`, score);
             resetBox(box, cameraPositionY);
             bullet.parentNode.removeChild(bullet);
           }
         }
       });
+      firstrun = false;
     }
   });
 
@@ -330,9 +342,9 @@ const calculateBoxChange = direction => {
 };
 
 const calculateMovement = (cameraPositionX, cameraPositionY) => {
-  if (planespeed < 3) {
-    planespeed += 0.01;
-    speedtext.setAttribute(`value`, Math.round(planespeed * 100) / 100);
+  if (planespeed < MAXSPEED) {
+    planespeed += 0.005;
+    speedtext.setAttribute(`value`, `${Math.round((planespeed / MAXSPEED) * 100)}%`);
   }
 
   let xChange = 0;
@@ -371,6 +383,24 @@ const calculateMovement = (cameraPositionX, cameraPositionY) => {
     zChange: zChange,
     yChange: yChange
   };
+};
+
+const saveScore = () => {
+  if (localStorage.score) {
+    if (localStorage.score < score) {
+      localStorage.setItem(`score`, score);
+      highscoretext.setAttribute(`value`, `HIGHSCORE: ${score}`);
+    }
+  } else {
+    localStorage.setItem(`score`, score);
+    highscoretext.setAttribute(`value`, `HIGHSCORE: ${score}`);
+  }
+};
+
+const checkHighscore = () => {
+  if (localStorage.score) {
+    highscoretext.setAttribute(`value`, `HIGHSCORE: ${localStorage.score}`);
+  }
 };
 
 init();
