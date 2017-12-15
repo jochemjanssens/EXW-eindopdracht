@@ -217,7 +217,10 @@ const shoot = direction => {
 
 const generateNewBox = cameraPositionY => {
   const box = document.createElement(`a-sphere`);
-  box.setAttribute(`src`, `#texture`);
+
+  const texture = Math.floor(Math.random() * 3) + 1;
+
+  box.setAttribute(`src`, `#texture${texture}`);
 
   box.setAttribute(`radius`, 3);
 
