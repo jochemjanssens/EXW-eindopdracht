@@ -59,6 +59,7 @@ const init = () => {
 
 const startgame = () => {
   console.log(`start`);
+
   timer = setInterval(function() {
     handleTimer(count);
   }, 1000);
@@ -97,6 +98,34 @@ const handleTimer = () => {
   count --;
 };
 
+let totalVolume = 0;
+let volumeElements = 0;
+
+const checkShooting = changes => {
+  if (analyser) {
+    analyser.getByteFrequencyData(frequencyArray);
+
+    let values = 0;
+    const length = frequencyArray.length;
+    for (let i = 0;i < length;i ++) {
+      values += frequencyArray[i];
+    }
+
+    const volume = values / length;
+    totalVolume += volume;
+    volumeElements ++;
+
+    const averageVolume = totalVolume / volumeElements;
+
+    if (volume > averageVolume + 10 && isShooting === false) {
+      shoot(changes);
+      isShooting = true;
+    } else if (volume < averageVolume + 10 && isShooting === true) {
+      isShooting = false;
+    }
+  }
+};
+
 const update = () => {
   const cameraPosition = document.querySelector(`a-camera`).components.rotation.data;
   const cameraPositionY = Math.floor(Math.abs(cameraPosition.y % 360));
@@ -106,19 +135,10 @@ const update = () => {
 
   const numberOfPlanets = document.querySelectorAll(`.planet`).length;
   if (numberOfPlanets < maxPlanets) {
-    //console.log(numberOfPlanets);
     generateNewBox(cameraPositionY);
   }
 
-  if (analyser) {
-    analyser.getByteFrequencyData(frequencyArray);
-    if (frequencyArray[0] > 50 && isShooting === false) {
-      shoot(changes);
-      isShooting = true;
-    } else if (frequencyArray[0] < 50 && isShooting === true) {
-      isShooting = false;
-    }
-  }
+  checkShooting(changes);
 
   let firstrun = true;
 
@@ -185,7 +205,7 @@ const update = () => {
 
 const shoot = direction => {
   const bullet = document.createElement(`a-sphere`);
-  bullet.setAttribute(`color`, `#FC0D1C`);
+  bullet.setAttribute(`color`, `#FF3300`);
   bullet.setAttribute(`radius`, `0.3`);
 
   bullet.classList.add(`bullet`);
