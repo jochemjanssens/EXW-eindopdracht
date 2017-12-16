@@ -13,6 +13,21 @@ let score = 0;
 
 let planespeed = 0.1;
 
+const rightArrow = document.querySelector(`.arrow-right`);
+const leftArrow = document.querySelector(`.arrow-left`);
+
+const titel = document.querySelector(`.titel`);
+const rules = document.querySelector(`.rules`);
+const instructionsRight = document.querySelector(`.instructions-right`);
+const instructionsLeft = document.querySelector(`.instructions-left`);
+const arrowRight = document.querySelector(`.arrow-right`);
+
+const arrowLeft = document.querySelector(`.arrow-left`);
+const playTitle = document.querySelector(`.playTitle`);
+
+const vrButton = document.querySelector(`.a-enter-vr-button`);
+
+
 const restart = () => {
   count = 3;
   dead = false;
@@ -35,13 +50,51 @@ const init = () => {
   centertext = document.querySelector(`.centertext`);
   speedtext = document.querySelector(`.speedtext`);
 
+  vrButton.classList.add(`invisible`);
+
+  rightArrow.addEventListener(`click`, rightArrowClicked);
+  leftArrow.addEventListener(`click`, leftArrowClicked);
+
   checkAudio();
 
   setTimeout(() => {
     const vrbutton = document.querySelector(`.a-enter-vr-button`);
     console.log(vrbutton);
     vrbutton.addEventListener(`mousedown`, startgame);
-  }, 0);
+  }, 1000);
+};
+
+const rightArrowClicked = () => {
+
+  // const vrButton = document.querySelector(`a-enter-vr-button`);
+
+  titel.classList.add(`invisible`);
+  rules.classList.add(`invisible`);
+  instructionsRight.classList.add(`invisible`);
+  instructionsLeft.classList.add(`invisible`);
+  arrowRight.classList.add(`invisible`);
+
+  arrowLeft.classList.remove(`invisible`);
+  playTitle.classList.remove(`invisible`);
+  vrButton.classList.remove(`invisible`);
+  // vrButton.classList.remove(`invisible`);
+
+};
+
+const leftArrowClicked = () => {
+  // const vrButton = document.querySelector(`a-enter-vr-button`);
+
+  titel.classList.remove(`invisible`);
+  rules.classList.remove(`invisible`);
+  instructionsRight.classList.remove(`invisible`);
+  instructionsLeft.classList.remove(`invisible`);
+  arrowRight.classList.remove(`invisible`);
+
+  arrowLeft.classList.add(`invisible`);
+  playTitle.classList.add(`invisible`);
+  vrButton.classList.add(`invisible`);
+  // vrButton.classList.remove(`invisible`);
+
 };
 
 const startgame = () => {
@@ -156,7 +209,7 @@ const update = () => {
   });
 
   if (dead === false) {
-    requestAnimationFrame(update);
+    // requestAnimationFrame(update);
   }
 };
 
