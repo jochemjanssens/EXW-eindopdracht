@@ -3,7 +3,7 @@
 <head>
 
   <meta charset="UTF-8">
-  <title>Eindopdracht</title>
+  <title>orbit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <script src="js/aframe.min.js"></script>
 </head>
@@ -25,12 +25,17 @@
   <a-scene stats>
     <a-assets>
         <img id="sky" src="./assets/bg.png" crossorigin="anonymous" />
-        <img id="texture" src="./assets/texture.jpg" crossorigin="anonymous" />
+        <img id="texture1" src="./assets/texture1.jpg" crossorigin="anonymous" />
+        <img id="texture2" src="./assets/texture2.jpg" crossorigin="anonymous" />
+        <img id="texture3" src="./assets/texture3.jpg" crossorigin="anonymous" />
       </a-assets>
     <a-camera>
+      <a-text class="highscore" value="HIGHSCORE: 0" position="1.5 1.5 -4" align="right"></a-text>
       <a-text class="centertext" value="" position="0 0 -.5" align="center"></a-text>
-      <a-text class="score" value="Score: 0" position=".05 -.48 -1" scale=".3 .3"></a-text>
-      <a-text class="speedtext" value="0.1" position="-.42 -.48 -1" scale=".3 .3"></a-text>
+      <a-text class="score" value="0" position=".03 -.42 -1" scale=".3 .3"></a-text>
+      <a-text class="scorelabel" value="SCORE" position=".25 -.55 -1" scale=".2 .2"></a-text>
+      <a-text class="speed" value="0%" position="-.11 -.42 -1" scale=".3 .3" align="right"></a-text>
+      <a-text class="speedlabel" value="LIGHTSPEED" position="-.55 -.55 -1" scale=".2 .2"></a-text>
       <a-plane height= "1" width= "2" position="0 -0.2 -1" src="./assets/spaceship.png" transparent="true"></a-entity>
     </a-camera>
     <a-entity class="parent" position="0 0 0">
