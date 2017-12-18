@@ -31,14 +31,13 @@ body {
 .a-enter-vr-button {
   right: calc(50% - 45px);
   position: absolute;
-  bottom: 12rem;
+  bottom: 8rem;
 }
 
 .titel, .playTitle {
   font-size: 1.6em;
   font-weight: 100;
   text-align: center;
-  margin-top: -8rem;
 }
 
 .orbit {
@@ -93,4 +92,61 @@ body {
 
 .invisible {
   display: none;
+}
+
+@media (max-width: 420px) {
+
+  .titel {
+    margin-top: -14rem;
+  }
+
+  .rules {
+    font-size: 2.6rem;
+  }
+
+  .instruction-flex {
+    flex-direction: column;
+  }
+
+  .instructions {
+    margin-top: 3rem;
+    font-size: 2rem;
+    width: 90%;
+    line-height: 3rem;
+  }
+
+  .arrow-right {
+    left: 24%;
+    top: 68%;
+    position: absolute;
+  }
+
+  .arrow-left {
+    left: 6%;
+    top: 64%;
+    position: absolute;
+  }
+
+  .a-enter-vr-button {
+    right: calc(50% - 38px);
+    position: absolute;
+    bottom: 120px;
+    bottom: 21rem;
+  }
+
+  .overlay {
+    position: absolute;
+    z-index: 3;
+    color: white;
+    /*background-color: rgba(0, 0, 0, .8);*/
+    background-image: url(../assets/backgroundd.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+  }
 }
