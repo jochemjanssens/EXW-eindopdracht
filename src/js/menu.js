@@ -1,26 +1,30 @@
-const rightArrow = document.querySelector(`.arrow-right`);
-const leftArrow = document.querySelector(`.arrow-left`);
-
-const titel = document.querySelector(`.titel`);
-const rules = document.querySelector(`.rules`);
-const instructionsRight = document.querySelector(`.instructions-right`);
-const instructionsLeft = document.querySelector(`.instructions-left`);
-const arrowRight = document.querySelector(`.arrow-right`);
-
-const arrowLeft = document.querySelector(`.arrow-left`);
-const playTitle = document.querySelector(`.playTitle`);
-
-const vrButton = document.querySelector(`.a-enter-vr-button`);
+let rightArrow, leftArrow, title, rules, instructionsRight, instructionsLeft, arrowRight, arrowLeft, playTitle, vrButton;
 
 const init = () => {
-  vrButton.classList.add(`invisible`);
+  rightArrow = document.querySelector(`.arrow-right`);
+  leftArrow = document.querySelector(`.arrow-left`);
+
+  title = document.querySelector(`.title`);
+  rules = document.querySelector(`.rules`);
+  instructionsRight = document.querySelector(`.instructions-right`);
+  instructionsLeft = document.querySelector(`.instructions-left`);
+  arrowRight = document.querySelector(`.arrow-right`);
+
+  arrowLeft = document.querySelector(`.arrow-left`);
+  playTitle = document.querySelector(`.playTitle`);
+
+  vrButton = document.querySelector(`.a-enter-vr-button`);
+
+  if (vrButton) {
+    vrButton.classList.add(`invisible`);
+  }
   rightArrow.addEventListener(`click`, rightArrowClicked);
   leftArrow.addEventListener(`click`, leftArrowClicked);
 };
 
 const rightArrowClicked = () => {
 
-  titel.classList.add(`invisible`);
+  title.classList.add(`invisible`);
   rules.classList.add(`invisible`);
   instructionsRight.classList.add(`invisible`);
   instructionsLeft.classList.add(`invisible`);
@@ -34,7 +38,7 @@ const rightArrowClicked = () => {
 
 const leftArrowClicked = () => {
 
-  titel.classList.remove(`invisible`);
+  title.classList.remove(`invisible`);
   rules.classList.remove(`invisible`);
   instructionsRight.classList.remove(`invisible`);
   instructionsLeft.classList.remove(`invisible`);
