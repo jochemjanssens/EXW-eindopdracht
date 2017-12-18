@@ -12,15 +12,13 @@ const playTitle = document.querySelector(`.playTitle`);
 
 const vrButton = document.querySelector(`.a-enter-vr-button`);
 
-
 const init = () => {
+  vrButton.classList.add(`invisible`);
   rightArrow.addEventListener(`click`, rightArrowClicked);
   leftArrow.addEventListener(`click`, leftArrowClicked);
 };
 
 const rightArrowClicked = () => {
-
- // const vrButton = document.querySelector(`a-enter-vr-button`);
 
   titel.classList.add(`invisible`);
   rules.classList.add(`invisible`);
@@ -31,12 +29,10 @@ const rightArrowClicked = () => {
   arrowLeft.classList.remove(`invisible`);
   playTitle.classList.remove(`invisible`);
   vrButton.classList.remove(`invisible`);
- // vrButton.classList.remove(`invisible`);
 
 };
 
 const leftArrowClicked = () => {
- // const vrButton = document.querySelector(`a-enter-vr-button`);
 
   titel.classList.remove(`invisible`);
   rules.classList.remove(`invisible`);
@@ -47,9 +43,6 @@ const leftArrowClicked = () => {
   arrowLeft.classList.add(`invisible`);
   playTitle.classList.add(`invisible`);
   vrButton.classList.add(`invisible`);
- // vrButton.classList.remove(`invisible`);
-
- //}, 100);
 };
 
 export default () => {

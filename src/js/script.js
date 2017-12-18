@@ -194,6 +194,7 @@ const update = () => {
           }
 
           //Collision Detection
+<<<<<<< HEAD
           if (bulletposition.x < position.x + 3 &&  bulletposition.x > position.x - 3  && bulletposition.y < position.y + 3 &&  bulletposition.y > position.y - 3 && bulletposition.z < position.z + 3 &&  bulletposition.z > position.z - 3) {
             console.log(`raak`);
             score += 1;
@@ -260,6 +261,75 @@ const generateNewPlanet = cameraPositionY => {
   let position;
 
   if (cameraPositionY === 0) {
+=======
+           if (bulletposition.x < position.x + 3 &&  bulletposition.x > position.x - 3  && bulletposition.y < position.y + 3 &&  bulletposition.y > position.y - 3 && bulletposition.z < position.z + 3 &&  bulletposition.z > position.z - 3) {
+             console.log(`raak`);
+             score += 1;
+             scoretext.setAttribute(`value`, score);
+             box.classList.add(`hit`);
+             bullet.parentNode.removeChild(bullet);
+           }
+         }
+       });
+       firstrun = false;
+     }
+   });
+
+   if (dead === false) {
+     requestAnimationFrame(update);
+   }
+ };
+
+ const deadHandler = () => {
+   centertext.setAttribute(`value`, `dood`);
+   dead = true;
+
+   animateDead();
+ };
+
+ let counter  = 0;
+
+
+ const animateDead = () => {
+
+   if (counter > 60) {
+     restart();
+   } else {
+     counter ++;
+     requestAnimationFrame(animateDead);
+   }
+ };
+
+ const shoot = direction => {
+   const bullet = document.createElement(`a-sphere`);
+   bullet.setAttribute(`color`, `#FF3300`);
+   bullet.setAttribute(`radius`, `0.3`);
+
+   bullet.classList.add(`bullet`);
+   bullet.dataset.xChange = direction.xChange;
+   bullet.dataset.yChange = direction.yChange;
+   bullet.dataset.zChange = direction.zChange;
+   document.querySelector(`a-scene`).appendChild(bullet);
+ };
+
+ const generateNewBox = cameraPositionY => {
+   const box = document.createElement(`a-sphere`);
+
+   const texture = Math.floor(Math.random() * 3) + 1;
+
+   box.setAttribute(`src`, `#texture${texture}`);
+
+   box.setAttribute(`radius`, 3);
+
+   box.setAttribute(`scale`, `0 0 0`);
+
+   const vertical = Math.floor(Math.random() * (WORLDSIZE * 2)) - WORLDSIZE;
+   const horizontal = Math.floor(Math.random() * (WORLDSIZE * 2)) - WORLDSIZE;
+
+   let position;
+
+   if (cameraPositionY === 0) {
+>>>>>>> b76d5b33f82586c8e57b85f6dd9d15dbf7675b93
     // 1 2 3
     position = Math.floor(Math.random() * 3) + 1;
   } else if (cameraPositionY <= 90) {
