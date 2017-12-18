@@ -106,7 +106,7 @@ const handleTimer = () => {
 let totalVolume = 0;
 let volumeElements = 0;
 
-const checkShooting = (changes, cameraPositionY) => {
+const checkShooting = (changes, cameraPositionX, cameraPositionY) => {
   if (analyser) {
     analyser.getByteFrequencyData(frequencyArray);
 
@@ -123,7 +123,7 @@ const checkShooting = (changes, cameraPositionY) => {
     const averageVolume = totalVolume / volumeElements;
 
     if (volume > averageVolume + 10 && isShooting === false) {
-      shoot(changes, cameraPositionY);
+      shoot(changes, cameraPositionX, cameraPositionY);
       isShooting = true;
     } else if (volume < averageVolume + 10 && isShooting === true) {
       isShooting = false;
@@ -143,7 +143,7 @@ const update = () => {
     generateNewPlanet(cameraPositionY);
   }
 
-  checkShooting(changes, cameraPositionY);
+  checkShooting(changes, cameraPositionX, cameraPositionY);
 
   let firstrun = true;
 
@@ -222,21 +222,24 @@ const deadHandler = () => {
 let counter  = 0;
 
 const animateDead = () => {
-
+  const deathElement = document.querySelector(`.deadoverlay`);
   if (counter > 60) {
     restart();
   } else {
+    const newOpacity = deathElement.getAttribute(`material`).opacity + 0.01;
+    deathElement.setAttribute(`material`, `opacity: ${newOpacity}`);
     counter ++;
     requestAnimationFrame(animateDead);
   }
 };
 
-const shoot = (direction, cameraPositionY) => {
+const shoot = (direction, cameraPositionX, cameraPositionY) => {
   const bullet = document.createElement(`a-cylinder`);
+  bullet.setAttribute(`position`, `0 -1 0`);
   bullet.setAttribute(`color`, `#FC0D1B`);
   bullet.setAttribute(`radius`, `0.3`);
   bullet.setAttribute(`height`, `50`);
-  bullet.setAttribute(`rotation`, `-90 ${cameraPositionY} 0`);
+  bullet.setAttribute(`rotation`, `${- 90 + (cameraPositionX / 2)} ${cameraPositionY} 0`);
 
   bullet.classList.add(`bullet`);
   bullet.dataset.xChange = direction.xChange;
@@ -394,7 +397,7 @@ const calculateBoxChange = direction => {
 
 const calculateMovement = (cameraPositionX, cameraPositionY) => {
   if (planespeed < MAXSPEED) {
-    planespeed += 0.001;
+    planespeed += 0.005;
     speedtext.setAttribute(`value`, `${Math.round((planespeed / MAXSPEED) * 100)}%`);
   }
 

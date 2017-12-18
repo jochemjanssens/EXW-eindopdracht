@@ -13,11 +13,11 @@ const init = () => {
   arrowLeft = document.querySelector(`.arrow-left`);
   playTitle = document.querySelector(`.playTitle`);
 
-  vrButton = document.querySelector(`.a-enter-vr-button`);
-
-  if (vrButton) {
+  setTimeout(() => {
+    vrButton = document.querySelector(`.a-enter-vr-button`);
     vrButton.classList.add(`invisible`);
-  }
+  }, 0);
+
   rightArrow.addEventListener(`click`, rightArrowClicked);
   leftArrow.addEventListener(`click`, leftArrowClicked);
 };
