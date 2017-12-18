@@ -32,14 +32,7 @@ body {
   right: calc(50% - 60px);
 }
 
-.titel {
-  font-size: 1.6em;
-  font-weight: 100;
-  text-align: center;
-  margin-top: 5rem;
-}
-
-.playTitle {
+.titel, .playTitle {
   font-size: 1.6em;
   font-weight: 100;
   text-align: center;

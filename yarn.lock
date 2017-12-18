@@ -58,6 +58,10 @@ acorn@^5.0.0, acorn@^5.2.1:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.2.1.tgz#317ac7821826c22c702d66189ab8359675f135d7"
 
+aframe-stats-in-vr-component@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/aframe-stats-in-vr-component/-/aframe-stats-in-vr-component-0.1.7.tgz#e7a0cb0277efae0de490e78cd908cb255bb43808"
+
 ajv-keywords@^1.0.0, ajv-keywords@^1.1.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-1.5.1.tgz#314dd0a4b3368fad3dfcdc54ede6171b886daf3c"

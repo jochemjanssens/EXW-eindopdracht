@@ -1,455 +1,457 @@
- import setupMenu from '../js/menu.js';
+import setupMenu from '../js/menu.js';
 
- let scoretext;
- let centertext;
- let speedtext;
- let highscoretext;
+let scoretext, centertext, speedtext, highscoretext;
 
- let count = 7;
- let timer;
+let count = 7;
+let timer;
 
- let dead = false;
- let analyser, frequencyArray;
- let isShooting = false;
- let score = 0;
+let dead = false;
+let analyser, frequencyArray;
+let isShooting = false;
+let score = 0;
 
- const PLANETSPAWNSPEED = 100;
- const STARTPLANETS = 50;
- const WORLDSIZE = 200;
- const MAXSPEED = 3;
+const PLANETSPAWNSPEED = 100;
+const STARTPLANETS = 50;
+const WORLDSIZE = 200;
+const MAXSPEED = 3;
+const MAXNUMBERSOFPLANETS = 200;
 
- let maxPlanets = STARTPLANETS;
- let planespeed = 0.5;
+let currentPlanets = STARTPLANETS;
+let planespeed = 0.5;
 
- const restart = () => {
-   count = 3;
-   dead = false;
-   maxPlanets = STARTPLANETS;
-   score = 0;
-   planespeed = 0.1;
+const restart = () => {
+  count = 3;
+  dead = false;
+  currentPlanets = STARTPLANETS;
+  score = 0;
+  planespeed = 0.1;
 
-   document.querySelectorAll(`.bullet`).forEach(bullet => {
-     bullet.parentNode.removeChild(bullet);
-   });
+  document.querySelectorAll(`.bullet`).forEach(bullet => {
+    bullet.parentNode.removeChild(bullet);
+  });
 
-   startgame();
- };
+  startgame();
+};
 
- const init = () => {
-   for (let i = 0;i < STARTPLANETS;i ++) {
-     generateNewBox();
-   }
+const init = () => {
 
-   setInterval(function() {
-     maxPlanets ++;
-   }, PLANETSPAWNSPEED);
+  for (let i = 0;i < STARTPLANETS;i ++) {
+    generateNewPlanet();
+  }
 
-   setupMenu();
+  const spawnPlanets = setInterval(function() {
+    currentPlanets ++;
+    if (MAXNUMBERSOFPLANETS < currentPlanets) {
+      clearInterval(spawnPlanets);
+    }
+  }, PLANETSPAWNSPEED);
 
-   scoretext = document.querySelector(`.score`);
-   centertext = document.querySelector(`.centertext`);
-   speedtext = document.querySelector(`.speed`);
-   highscoretext = document.querySelector(`.highscore`);
+  setupMenu();
 
-   checkHighscore();
+  scoretext = document.querySelector(`.score`);
+  centertext = document.querySelector(`.centertext`);
+  speedtext = document.querySelector(`.speed`);
+  highscoretext = document.querySelector(`.highscore`);
 
-   checkAudio();
+  checkHighscore();
 
-   setTimeout(() => {
-     const vrbutton = document.querySelector(`.a-enter-vr-button`);
-     vrbutton.addEventListener(`mousedown`, startgame);
-   }, 1000);
- };
+  checkAudio();
 
- const startgame = () => {
-   timer = setInterval(function() {
-     handleTimer(count);
-   }, 1000);
+  setTimeout(() => {
+    const vrbutton = document.querySelector(`.a-enter-vr-button`);
+    vrbutton.addEventListener(`mousedown`, startgame);
+  }, 1000);
+};
 
- };
+const startgame = () => {
+  timer = setInterval(function() {
+    handleTimer(count);
+  }, 1000);
 
- const checkAudio = () => {
-   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-   navigator.getUserMedia({audio: true}, soundAllowed, soundNotAllowed);
- };
+};
 
- const soundAllowed = stream => {
-   window.persistAudioStream = stream;
-   const audioContent = new AudioContext();
-   const audioStream = audioContent.createMediaStreamSource(stream);
-   analyser = audioContent.createAnalyser();
-   audioStream.connect(analyser);
-   analyser.fftSize = 1024;
-   frequencyArray = new Uint8Array(analyser.frequencyBinCount);
- };
+const checkAudio = () => {
+  navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+  navigator.getUserMedia({audio: true}, soundAllowed, soundNotAllowed);
+};
 
- const soundNotAllowed = error => {
-   console.log(error);
- };
+const soundAllowed = stream => {
+  window.persistAudioStream = stream;
+  const audioContent = new AudioContext();
+  const audioStream = audioContent.createMediaStreamSource(stream);
+  analyser = audioContent.createAnalyser();
+  audioStream.connect(analyser);
+  analyser.fftSize = 1024;
+  frequencyArray = new Uint8Array(analyser.frequencyBinCount);
+};
 
- const handleTimer = () => {
-   if (count === - 1) {
-     clearInterval(timer);
-     centertext.setAttribute(`value`, ``);
-     console.log(`start`);
-     update();
-   } else if (count === 0) {
-     centertext.setAttribute(`value`, `go`);
-   } else {
-     centertext.setAttribute(`value`, count);
-   }
-   count --;
- };
+const soundNotAllowed = error => {
+  console.log(error);
+};
 
- let totalVolume = 0;
- let volumeElements = 0;
+const handleTimer = () => {
+  if (count === - 1) {
+    clearInterval(timer);
+    centertext.setAttribute(`value`, ``);
+    console.log(`start`);
+    update();
+  } else if (count === 0) {
+    centertext.setAttribute(`value`, `go`);
+  } else {
+    centertext.setAttribute(`value`, count);
+  }
+  count --;
+};
 
- const checkShooting = changes => {
-   if (analyser) {
-     analyser.getByteFrequencyData(frequencyArray);
+let totalVolume = 0;
+let volumeElements = 0;
 
-     let values = 0;
-     const length = frequencyArray.length;
-     for (let i = 0;i < length;i ++) {
-       values += frequencyArray[i];
-     }
+const checkShooting = (changes, cameraPositionY) => {
+  if (analyser) {
+    analyser.getByteFrequencyData(frequencyArray);
 
-     const volume = values / length;
-     totalVolume += volume;
-     volumeElements ++;
+    let values = 0;
+    const length = frequencyArray.length;
+    for (let i = 0;i < length;i ++) {
+      values += frequencyArray[i];
+    }
 
-     const averageVolume = totalVolume / volumeElements;
+    const volume = values / length;
+    totalVolume += volume;
+    volumeElements ++;
 
-     if (volume > averageVolume + 10 && isShooting === false) {
-       shoot(changes);
-       isShooting = true;
-     } else if (volume < averageVolume + 10 && isShooting === true) {
-       isShooting = false;
-     }
-   }
- };
+    const averageVolume = totalVolume / volumeElements;
 
- const update = () => {
-   const cameraPosition = document.querySelector(`a-camera`).components.rotation.data;
-   const cameraPositionY = Math.floor(Math.abs(cameraPosition.y % 360));
-   const cameraPositionX = Math.floor(cameraPosition.x % 360);
+    if (volume > averageVolume + 10 && isShooting === false) {
+      shoot(changes, cameraPositionY);
+      isShooting = true;
+    } else if (volume < averageVolume + 10 && isShooting === true) {
+      isShooting = false;
+    }
+  }
+};
 
-   const changes = calculateMovement(cameraPositionX, cameraPositionY);
+const update = () => {
+  const cameraPosition = document.querySelector(`a-camera`).components.rotation.data;
+  const cameraPositionY = Math.floor(Math.abs(cameraPosition.y % 360));
+  const cameraPositionX = Math.floor(cameraPosition.x % 360);
 
-   const numberOfPlanets = document.querySelectorAll(`.planet`).length;
-   if (numberOfPlanets < maxPlanets) {
-     generateNewBox(cameraPositionY);
-   }
+  const changes = calculateMovement(cameraPositionX, cameraPositionY);
 
-   checkShooting(changes);
+  const numberOfPlanets = document.querySelectorAll(`.planet`).length;
+  if (numberOfPlanets < currentPlanets) {
+    generateNewPlanet(cameraPositionY);
+  }
 
-   let firstrun = true;
+  checkShooting(changes, cameraPositionY);
 
-   document.querySelectorAll(`.planet`).forEach(box => {
+  let firstrun = true;
 
-     const scale = box.getAttribute(`scale`);
-     if (scale) {
+  document.querySelectorAll(`.planet`).forEach(box => {
+
+    const scale = box.getAttribute(`scale`);
+    if (scale) {
       //Planet rustig afbreken
-       if (box.classList.contains(`hit`)) {
-         if (scale.x > 0) {
-           const newScale = scale.x - 0.2;
-           box.setAttribute(`scale`, `${newScale} ${newScale} ${newScale}`);
-         } else {
-           resetBox(box, cameraPositionY);
-         }
+      if (box.classList.contains(`hit`)) {
+        if (scale.x > 0) {
+          const newScale = scale.x - 0.2;
+          box.setAttribute(`scale`, `${newScale} ${newScale} ${newScale}`);
+        } else {
+          resetBox(box, cameraPositionY);
+        }
       //Planeet spawnen
-       } else if (scale.x <= 1) {
-         const newScale = scale.x + 0.1;
-         box.setAttribute(`scale`, `${newScale} ${newScale} ${newScale}`);
-       }
-     }
+      } else if (scale.x <= 1) {
+        const newScale = scale.x + 0.1;
+        box.setAttribute(`scale`, `${newScale} ${newScale} ${newScale}`);
+      }
+    }
 
-     const position = box.getAttribute(`position`);
-     if (position) {
-       const boxChange = calculateBoxChange(box.classList[0]);
-       box.setAttribute(`position`, `${position.x + boxChange.xChange + changes.xChange} ${position.y - changes.yChange} ${position.z + boxChange.zChange + changes.zChange}`);
+    const position = box.getAttribute(`position`);
+    if (position) {
+      const boxChange = calculateBoxChange(box.classList[0]);
+      box.setAttribute(`position`, `${position.x + boxChange.xChange + changes.xChange} ${position.y - changes.yChange} ${position.z + boxChange.zChange + changes.zChange}`);
 
-       if (position.x > WORLDSIZE || position.z > WORLDSIZE || position.x < - WORLDSIZE || position.z < - WORLDSIZE || position.y > WORLDSIZE || position.y < - WORLDSIZE) {
-         resetBox(box, cameraPositionY);
-       }
+      if (position.x > WORLDSIZE || position.z > WORLDSIZE || position.x < - WORLDSIZE || position.z < - WORLDSIZE || position.y > WORLDSIZE || position.y < - WORLDSIZE) {
+        resetBox(box, cameraPositionY);
+      }
 
-       if (position.x < 3 && position.x > - 3 && position.z < 3 && position.z > - 3 && position.y < 3 && position.y > - 3) {
-         box.parentNode.removeChild(box);
-         deadHandler();
+      if (position.x < 3 && position.x > - 3 && position.z < 3 && position.z > - 3 && position.y < 3 && position.y > - 3) {
+        box.parentNode.removeChild(box);
+        deadHandler();
 
-         saveScore();
-       }
+        saveScore();
+      }
 
-       document.querySelectorAll(`.bullet`).forEach(bullet => {
-         const bulletposition = bullet.getAttribute(`position`);
-         if (bulletposition) {
-           if (firstrun) {
-             bullet.setAttribute(`position`, `${bulletposition.x - (bullet.dataset.xChange * 8)} ${bulletposition.y + (bullet.dataset.yChange * 8)} ${bulletposition.z - (bullet.dataset.zChange * 8)}`);
-           }
+      document.querySelectorAll(`.bullet`).forEach(bullet => {
+        const bulletposition = bullet.getAttribute(`position`);
+        if (bulletposition) {
+          if (firstrun) {
+            bullet.setAttribute(`position`, `${bulletposition.x - (bullet.dataset.xChange * 8)} ${bulletposition.y + (bullet.dataset.yChange * 8)} ${bulletposition.z - (bullet.dataset.zChange * 8)}`);
+          }
 
-           if (bulletposition.x > WORLDSIZE || bulletposition.z > WORLDSIZE || bulletposition.x < - WORLDSIZE || bulletposition.z < - WORLDSIZE || bulletposition.y > WORLDSIZE || bulletposition.y < - WORLDSIZE) {
-             bullet.parentNode.removeChild(bullet);
-           }
+          if (bulletposition.x > WORLDSIZE || bulletposition.z > WORLDSIZE || bulletposition.x < - WORLDSIZE || bulletposition.z < - WORLDSIZE || bulletposition.y > WORLDSIZE || bulletposition.y < - WORLDSIZE) {
+            bullet.parentNode.removeChild(bullet);
+          }
 
           //Collision Detection
-           if (bulletposition.x < position.x + 3 &&  bulletposition.x > position.x - 3  && bulletposition.y < position.y + 3 &&  bulletposition.y > position.y - 3 && bulletposition.z < position.z + 3 &&  bulletposition.z > position.z - 3) {
-             console.log(`raak`);
-             score += 1;
-             scoretext.setAttribute(`value`, score);
-             box.classList.add(`hit`);
-             bullet.parentNode.removeChild(bullet);
-           }
-         }
-       });
-       firstrun = false;
-     }
-   });
+          if (bulletposition.x < position.x + 3 &&  bulletposition.x > position.x - 3  && bulletposition.y < position.y + 3 &&  bulletposition.y > position.y - 3 && bulletposition.z < position.z + 3 &&  bulletposition.z > position.z - 3) {
+            console.log(`raak`);
+            score += 1;
+            scoretext.setAttribute(`value`, score);
+            box.classList.add(`hit`);
+            bullet.parentNode.removeChild(bullet);
+          }
+        }
+      });
+      firstrun = false;
+    }
+  });
 
-   if (dead === false) {
-     requestAnimationFrame(update);
-   }
- };
+  if (dead === false) {
+    requestAnimationFrame(update);
+  }
+};
 
- const deadHandler = () => {
-   centertext.setAttribute(`value`, `dood`);
-   dead = true;
+const deadHandler = () => {
+  centertext.setAttribute(`value`, `dood`);
+  dead = true;
 
-   animateDead();
- };
+  animateDead();
+};
 
- let counter  = 0;
+let counter  = 0;
 
- const animateDead = () => {
+const animateDead = () => {
 
-   if (counter > 60) {
-     restart();
-   } else {
-     counter ++;
-     requestAnimationFrame(animateDead);
-   }
- };
+  if (counter > 60) {
+    restart();
+  } else {
+    counter ++;
+    requestAnimationFrame(animateDead);
+  }
+};
 
- const shoot = direction => {
-   const bullet = document.createElement(`a-sphere`);
-   bullet.setAttribute(`color`, `#FF3300`);
-   bullet.setAttribute(`radius`, `0.3`);
+const shoot = (direction, cameraPositionY) => {
+  const bullet = document.createElement(`a-cylinder`);
+  bullet.setAttribute(`color`, `#FC0D1B`);
+  bullet.setAttribute(`radius`, `0.3`);
+  bullet.setAttribute(`height`, `50`);
+  bullet.setAttribute(`rotation`, `-90 ${cameraPositionY} 0`);
 
-   bullet.classList.add(`bullet`);
-   bullet.dataset.xChange = direction.xChange;
-   bullet.dataset.yChange = direction.yChange;
-   bullet.dataset.zChange = direction.zChange;
-   document.querySelector(`a-scene`).appendChild(bullet);
- };
+  bullet.classList.add(`bullet`);
+  bullet.dataset.xChange = direction.xChange;
+  bullet.dataset.yChange = direction.yChange;
+  bullet.dataset.zChange = direction.zChange;
+  document.querySelector(`a-scene`).appendChild(bullet);
+};
 
- const generateNewBox = cameraPositionY => {
-   const box = document.createElement(`a-sphere`);
+const generateNewPlanet = cameraPositionY => {
+  const planet = document.createElement(`a-sphere`);
 
-   const texture = Math.floor(Math.random() * 3) + 1;
+  const texture = Math.floor(Math.random() * 3) + 1;
 
-   box.setAttribute(`src`, `#texture${texture}`);
+  planet.setAttribute(`src`, `#texture${texture}`);
+  planet.setAttribute(`radius`, 3);
+  planet.setAttribute(`scale`, `0 0 0`);
 
-   box.setAttribute(`radius`, 3);
+  const vertical = Math.floor(Math.random() * (WORLDSIZE * 2)) - WORLDSIZE;
+  const horizontal = Math.floor(Math.random() * (WORLDSIZE * 2)) - WORLDSIZE;
 
-   box.setAttribute(`scale`, `0 0 0`);
+  let position;
 
-   const vertical = Math.floor(Math.random() * (WORLDSIZE * 2)) - WORLDSIZE;
-   const horizontal = Math.floor(Math.random() * (WORLDSIZE * 2)) - WORLDSIZE;
-
-   let position;
-
-   if (cameraPositionY === 0) {
+  if (cameraPositionY === 0) {
     // 1 2 3
-     position = Math.floor(Math.random() * 3) + 1;
-   } else if (cameraPositionY <= 90) {
+    position = Math.floor(Math.random() * 3) + 1;
+  } else if (cameraPositionY <= 90) {
     // 2 3
-     position = Math.floor(Math.random() * 2) + 2;
-   } else if (cameraPositionY <= 180) {
+    position = Math.floor(Math.random() * 2) + 2;
+  } else if (cameraPositionY <= 180) {
     // 0 3
-     if (Math.floor(Math.random() * 2) === 0) {
-       position = 0;
-     } else {
-       position = 3;
-     }
-   } else if (cameraPositionY <= 270) {
+    if (Math.floor(Math.random() * 2) === 0) {
+      position = 0;
+    } else {
+      position = 3;
+    }
+  } else if (cameraPositionY <= 270) {
     // 01
-     position = Math.floor(Math.random() * 2) + 1;
-   } else if (cameraPositionY < 360) {
+    position = Math.floor(Math.random() * 2) + 1;
+  } else if (cameraPositionY < 360) {
     // 1 2
-     position = Math.floor(Math.random() * 2) + 1;
-   }
+    position = Math.floor(Math.random() * 2) + 1;
+  }
 
-   let direction;
+  let direction;
 
-   if (position === 0) {
-     box.setAttribute(`position`, `${horizontal} ${vertical} ${WORLDSIZE}`);
-     const value = Math.floor(Math.random() * 180);
-     direction = (value < 90) ? 270 + value : value - 90;
-   } else if (position === 1) {
-     box.setAttribute(`position`, `${WORLDSIZE} ${vertical} ${horizontal}`);
-     direction = Math.floor(Math.random() * 180);
-   } else if (position === 2) {
-     box.setAttribute(`position`, `${horizontal} ${vertical} -${WORLDSIZE}`);
-     direction = Math.floor(Math.random() * 180) + 90;
-   } else {
-     box.setAttribute(`position`, `-${WORLDSIZE} ${vertical} ${horizontal}`);
-     direction = Math.floor(Math.random() * 180) + 180;
-   }
+  if (position === 0) {
+    planet.setAttribute(`position`, `${horizontal} ${vertical} ${WORLDSIZE}`);
+    const value = Math.floor(Math.random() * 180);
+    direction = (value < 90) ? 270 + value : value - 90;
+  } else if (position === 1) {
+    planet.setAttribute(`position`, `${WORLDSIZE} ${vertical} ${horizontal}`);
+    direction = Math.floor(Math.random() * 180);
+  } else if (position === 2) {
+    planet.setAttribute(`position`, `${horizontal} ${vertical} -${WORLDSIZE}`);
+    direction = Math.floor(Math.random() * 180) + 90;
+  } else {
+    planet.setAttribute(`position`, `-${WORLDSIZE} ${vertical} ${horizontal}`);
+    direction = Math.floor(Math.random() * 180) + 180;
+  }
 
-   box.classList.add(direction);
-   box.classList.add(`planet`);
+  planet.classList.add(direction);
+  planet.classList.add(`planet`);
 
-   document.querySelector(`.parent`).appendChild(box);
- };
+  document.querySelector(`.parent`).appendChild(planet);
+};
 
- const resetBox = (box, cameraPositionY) => {
-   box.setAttribute(`scale`, `0 0 0`);
+const resetBox = (box, cameraPositionY) => {
+  box.setAttribute(`scale`, `0 0 0`);
 
-   const vertical = Math.floor(Math.random() * (WORLDSIZE * 2)) - WORLDSIZE;
-   const horizontal = Math.floor(Math.random() * (WORLDSIZE * 2)) - WORLDSIZE;
+  const vertical = Math.floor(Math.random() * (WORLDSIZE * 2)) - WORLDSIZE;
+  const horizontal = Math.floor(Math.random() * (WORLDSIZE * 2)) - WORLDSIZE;
 
-   let position;
+  let position;
 
-   if (cameraPositionY === 0) {
+  if (cameraPositionY === 0) {
     // 1 2 3
-     position = Math.floor(Math.random() * 3) + 1;
-   } else if (cameraPositionY <= 90) {
+    position = Math.floor(Math.random() * 3) + 1;
+  } else if (cameraPositionY <= 90) {
     // 2 3
-     position = Math.floor(Math.random() * 2) + 2;
-   } else if (cameraPositionY <= 180) {
+    position = Math.floor(Math.random() * 2) + 2;
+  } else if (cameraPositionY <= 180) {
     // 0 3
-     if (Math.floor(Math.random() * 2) === 0) {
-       position = 0;
-     } else {
-       position = 3;
-     }
-   } else if (cameraPositionY <= 270) {
+    if (Math.floor(Math.random() * 2) === 0) {
+      position = 0;
+    } else {
+      position = 3;
+    }
+  } else if (cameraPositionY <= 270) {
     // 01
-     position = Math.floor(Math.random() * 2) + 1;
-   } else if (cameraPositionY < 360) {
+    position = Math.floor(Math.random() * 2) + 1;
+  } else if (cameraPositionY < 360) {
     // 1 2
-     position = Math.floor(Math.random() * 2) + 1;
-   }
+    position = Math.floor(Math.random() * 2) + 1;
+  }
 
-   let direction;
+  let direction;
 
-   if (position === 0) {
-     box.setAttribute(`position`, `${horizontal} ${vertical} ${WORLDSIZE}`);
-     const value = Math.floor(Math.random() * 180);
-     direction = (value < 90) ? 270 + value : value - 90;
-   } else if (position === 1) {
-     box.setAttribute(`position`, `${WORLDSIZE} ${vertical} ${horizontal}`);
-     direction = Math.floor(Math.random() * 180);
-   } else if (position === 2) {
-     box.setAttribute(`position`, `${horizontal} ${vertical} -${WORLDSIZE}`);
-     direction = Math.floor(Math.random() * 180) + 90;
-   } else {
-     box.setAttribute(`position`, `-${WORLDSIZE} ${vertical} ${horizontal}`);
-     direction = Math.floor(Math.random() * 180) + 180;
-   }
+  if (position === 0) {
+    box.setAttribute(`position`, `${horizontal} ${vertical} ${WORLDSIZE}`);
+    const value = Math.floor(Math.random() * 180);
+    direction = (value < 90) ? 270 + value : value - 90;
+  } else if (position === 1) {
+    box.setAttribute(`position`, `${WORLDSIZE} ${vertical} ${horizontal}`);
+    direction = Math.floor(Math.random() * 180);
+  } else if (position === 2) {
+    box.setAttribute(`position`, `${horizontal} ${vertical} -${WORLDSIZE}`);
+    direction = Math.floor(Math.random() * 180) + 90;
+  } else {
+    box.setAttribute(`position`, `-${WORLDSIZE} ${vertical} ${horizontal}`);
+    direction = Math.floor(Math.random() * 180) + 180;
+  }
 
-   box.className = ``;
-   box.classList.add(direction);
-   box.classList.add(`planet`);
- };
+  box.className = ``;
+  box.classList.add(direction);
+  box.classList.add(`planet`);
+};
 
- const calculateBoxChange = direction => {
-   const speed = 0.3;
+const calculateBoxChange = direction => {
+  const speed = 0.3;
 
-   let xChange = 0;
-   let zChange = 0;
+  let xChange = 0;
+  let zChange = 0;
 
-   if (direction === 0) {
+  if (direction === 0) {
     //Z++
-     zChange = speed;
+    zChange = speed;
     //X0
-   } else if (direction <= 90) {
+  } else if (direction <= 90) {
     //Z++
-     zChange = (90 - direction) / 90 * speed;
+    zChange = (90 - direction) / 90 * speed;
     //X++
-     xChange = direction / 90 * speed;
-   } else if (direction <= 180) {
+    xChange = direction / 90 * speed;
+  } else if (direction <= 180) {
     //Z--
-     zChange = - ((direction - 90) / 90 * speed);
+    zChange = - ((direction - 90) / 90 * speed);
     //X++
-     xChange = (Math.abs(direction - 180)) / 90 * speed;
-   } else if (direction <= 270) {
+    xChange = (Math.abs(direction - 180)) / 90 * speed;
+  } else if (direction <= 270) {
     //Z--
-     zChange = - ((270 - direction) / 90 * speed);
+    zChange = - ((270 - direction) / 90 * speed);
     //X--
-     xChange = - ((direction - 180) / 90 * speed);
-   } else if (direction < 360) {
+    xChange = - ((direction - 180) / 90 * speed);
+  } else if (direction < 360) {
     //Z++
-     zChange = (direction - 270) / 90 * speed;
+    zChange = (direction - 270) / 90 * speed;
     //X--
-     xChange = - ((360 - direction) / 90 * speed);
-   }
+    xChange = - ((360 - direction) / 90 * speed);
+  }
 
-   return {
-     xChange: xChange,
-     zChange: zChange
-   };
- };
+  return {
+    xChange: xChange,
+    zChange: zChange
+  };
+};
 
- const calculateMovement = (cameraPositionX, cameraPositionY) => {
-   if (planespeed < MAXSPEED) {
-     planespeed += 0.001;
-     speedtext.setAttribute(`value`, `${Math.round((planespeed / MAXSPEED) * 100)}%`);
-   }
+const calculateMovement = (cameraPositionX, cameraPositionY) => {
+  if (planespeed < MAXSPEED) {
+    planespeed += 0.001;
+    speedtext.setAttribute(`value`, `${Math.round((planespeed / MAXSPEED) * 100)}%`);
+  }
 
-   let xChange = 0;
-   let zChange = 0;
+  let xChange = 0;
+  let zChange = 0;
 
-   if (cameraPositionY === 0) {
+  if (cameraPositionY === 0) {
     //Z++
-     zChange = planespeed;
+    zChange = planespeed;
     //X0
-   } else if (cameraPositionY <= 90) {
+  } else if (cameraPositionY <= 90) {
     //Z++
-     zChange = (90 - cameraPositionY) / 90 * planespeed;
+    zChange = (90 - cameraPositionY) / 90 * planespeed;
     //X++
-     xChange = cameraPositionY / 90 * planespeed;
-   } else if (cameraPositionY <= 180) {
+    xChange = cameraPositionY / 90 * planespeed;
+  } else if (cameraPositionY <= 180) {
     //Z--
-     zChange = - ((cameraPositionY - 90) / 90 * planespeed);
+    zChange = - ((cameraPositionY - 90) / 90 * planespeed);
     //X++
-     xChange = (Math.abs(cameraPositionY - 180)) / 90 * planespeed;
-   } else if (cameraPositionY <= 270) {
+    xChange = (Math.abs(cameraPositionY - 180)) / 90 * planespeed;
+  } else if (cameraPositionY <= 270) {
     //Z--
-     zChange = - ((270 - cameraPositionY) / 90 * planespeed);
+    zChange = - ((270 - cameraPositionY) / 90 * planespeed);
     //X--
-     xChange = - ((cameraPositionY - 180) / 90 * planespeed);
-   } else if (cameraPositionY < 360) {
+    xChange = - ((cameraPositionY - 180) / 90 * planespeed);
+  } else if (cameraPositionY < 360) {
     //Z++
-     zChange = (cameraPositionY - 270) / 90 * planespeed;
+    zChange = (cameraPositionY - 270) / 90 * planespeed;
     //X--
-     xChange = - ((360 - cameraPositionY) / 90 * planespeed);
-   }
+    xChange = - ((360 - cameraPositionY) / 90 * planespeed);
+  }
 
-   const yChange = (cameraPositionX / 90);
+  const yChange = (cameraPositionX / 90);
 
-   return {
-     xChange: xChange,
-     zChange: zChange,
-     yChange: yChange
-   };
- };
+  return {
+    xChange: xChange,
+    zChange: zChange,
+    yChange: yChange
+  };
+};
 
- const saveScore = () => {
-   if (localStorage.score) {
-     if (localStorage.score < score) {
-       localStorage.setItem(`score`, score);
-       highscoretext.setAttribute(`value`, `HIGHSCORE: ${score}`);
-     }
-   } else {
-     localStorage.setItem(`score`, score);
-     highscoretext.setAttribute(`value`, `HIGHSCORE: ${score}`);
-   }
- };
+const saveScore = () => {
+  if (localStorage.score) {
+    if (localStorage.score < score) {
+      localStorage.setItem(`score`, score);
+      highscoretext.setAttribute(`value`, `HIGHSCORE: ${score}`);
+    }
+  } else {
+    localStorage.setItem(`score`, score);
+    highscoretext.setAttribute(`value`, `HIGHSCORE: ${score}`);
+  }
+};
 
- const checkHighscore = () => {
-   if (localStorage.score) {
-     highscoretext.setAttribute(`value`, `HIGHSCORE: ${localStorage.score}`);
-   }
- };
+const checkHighscore = () => {
+  if (localStorage.score) {
+    highscoretext.setAttribute(`value`, `HIGHSCORE: ${localStorage.score}`);
+  }
+};
 
- init();
+init();
