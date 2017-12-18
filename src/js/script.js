@@ -64,7 +64,7 @@ const init = () => {
 
   checkHighscore();
 
-  vrButton.classList.add(`invisible`);
+  
 
   rightArrow.addEventListener(`click`, rightArrowClicked);
   leftArrow.addEventListener(`click`, leftArrowClicked);
@@ -107,8 +107,6 @@ const leftArrowClicked = () => {
   playTitle.classList.add(`invisible`);
   vrButton.classList.add(`invisible`);
   // vrButton.classList.remove(`invisible`);
-
-  }, 100);
 };
 
 const startgame = () => {
