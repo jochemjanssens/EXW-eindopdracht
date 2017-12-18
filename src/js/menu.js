@@ -13,7 +13,7 @@ const playTitle = document.querySelector(`.playTitle`);
 const vrButton = document.querySelector(`.a-enter-vr-button`);
 
 const init = () => {
-  vrButton.classList.add(`invisible`);
+//  vrButton.classList.add(`invisible`);
   rightArrow.addEventListener(`click`, rightArrowClicked);
   leftArrow.addEventListener(`click`, leftArrowClicked);
 };
