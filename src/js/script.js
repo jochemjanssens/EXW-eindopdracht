@@ -17,7 +17,7 @@ const WORLDSIZE = 200;
 const MAXSPEED = 3;
 
 let maxPlanets = STARTPLANETS;
-let planespeed = 0.1;
+let planespeed = 0.5;
 
 const rightArrow = document.querySelector(`.arrow-right`);
 const leftArrow = document.querySelector(`.arrow-left`);
@@ -64,7 +64,7 @@ const init = () => {
 
   checkHighscore();
 
-  vrButton.classList.add(`invisible`);
+  //vrButton.classList.add(`invisible`);
 
   rightArrow.addEventListener(`click`, rightArrowClicked);
   leftArrow.addEventListener(`click`, leftArrowClicked);
@@ -108,12 +108,10 @@ const leftArrowClicked = () => {
   vrButton.classList.add(`invisible`);
   // vrButton.classList.remove(`invisible`);
 
-  }, 100);
+  //}, 100);
 };
 
 const startgame = () => {
-  console.log(`start`);
-
   timer = setInterval(function() {
     handleTimer(count);
   }, 1000);
@@ -143,6 +141,7 @@ const handleTimer = () => {
   if (count === - 1) {
     clearInterval(timer);
     centertext.setAttribute(`value`, ``);
+    console.log(`start`);
     update();
   } else if (count === 0) {
     centertext.setAttribute(`value`, `go`);
@@ -197,9 +196,19 @@ const update = () => {
   let firstrun = true;
 
   document.querySelectorAll(`.planet`).forEach(box => {
+
     const scale = box.getAttribute(`scale`);
     if (scale) {
-      if (scale.x <= 1) {
+      //Planet rustig afbreken
+      if (box.classList.contains(`hit`)) {
+        if (scale.x > 0) {
+          const newScale = scale.x - 0.2;
+          box.setAttribute(`scale`, `${newScale} ${newScale} ${newScale}`);
+        } else {
+          resetBox(box, cameraPositionY);
+        }
+      //Planeet spawnen
+      } else if (scale.x <= 1) {
         const newScale = scale.x + 0.1;
         box.setAttribute(`scale`, `${newScale} ${newScale} ${newScale}`);
       }
@@ -216,15 +225,9 @@ const update = () => {
 
       if (position.x < 3 && position.x > - 3 && position.z < 3 && position.z > - 3 && position.y < 3 && position.y > - 3) {
         box.parentNode.removeChild(box);
-        centertext.setAttribute(`value`, `dood`);
-        dead = true;
+        deadHandler();
 
         saveScore();
-
-        setTimeout(() => {
-          console.log(`restart`);
-          restart();
-        }, 1000);
       }
 
       document.querySelectorAll(`.bullet`).forEach(bullet => {
@@ -243,7 +246,7 @@ const update = () => {
             console.log(`raak`);
             score += 1;
             scoretext.setAttribute(`value`, score);
-            resetBox(box, cameraPositionY);
+            box.classList.add(`hit`);
             bullet.parentNode.removeChild(bullet);
           }
         }
@@ -253,7 +256,26 @@ const update = () => {
   });
 
   if (dead === false) {
-    // requestAnimationFrame(update);
+    requestAnimationFrame(update);
+  }
+};
+
+const deadHandler = () => {
+  centertext.setAttribute(`value`, `dood`);
+  dead = true;
+
+  animateDead();
+};
+
+let counter  = 0;
+
+const animateDead = () => {
+
+  if (counter > 60) {
+    restart();
+  } else {
+    counter ++;
+    requestAnimationFrame(animateDead);
   }
 };
 
@@ -420,7 +442,7 @@ const calculateBoxChange = direction => {
 
 const calculateMovement = (cameraPositionX, cameraPositionY) => {
   if (planespeed < MAXSPEED) {
-    planespeed += 0.005;
+    planespeed += 0.001;
     speedtext.setAttribute(`value`, `${Math.round((planespeed / MAXSPEED) * 100)}%`);
   }
 
