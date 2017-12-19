@@ -234,4 +234,16 @@ body {
     position: absolute;
     bottom: 3rem;
   }
+
+  .instructions {
+    font-size: 1.5rem;
+  }
+
+  .instruction-flex {
+    margin-top: 6vh;
+  }
+
+  .playTitle {
+    font-size: 2rem;
+  }
 }
