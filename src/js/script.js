@@ -46,7 +46,6 @@ const init = () => {
 };
 
 const restart = () => {
-  count = 3;
   dead = false;
   currentPlanets = STARTPLANETS;
   score = 0;
@@ -62,6 +61,8 @@ const restart = () => {
 };
 
 const startgame = () => {
+  count = 7;
+
   timer = setInterval(function() {
     handleTimer(count);
   }, 1000);
@@ -172,12 +173,7 @@ const update = () => {
 
   const numberOfPlanets = document.querySelectorAll(`.planet`).length;
   if (numberOfPlanets < currentPlanets) {
-    const poolPlanet = document.querySelector(`.destroyed`);
-    if (poolPlanet) {
-      resetBox(poolPlanet, cameraPositionY);
-    } else {
-      generateNewPlanet(cameraPositionY);
-    }
+    generateNewPlanet(cameraPositionY);
   }
 
   const volume = monitorAudio();
@@ -196,7 +192,7 @@ const update = () => {
           const newScale = scale.x - 0.2;
           box.setAttribute(`scale`, `${newScale} ${newScale} ${newScale}`);
         } else {
-          deletePlanet(box);
+          resetBox(box, cameraPositionY);
         }
       //Planeet spawnen
       } else if (scale.x <= 1) {
@@ -211,7 +207,7 @@ const update = () => {
       box.setAttribute(`position`, `${position.x + boxChange.xChange + changes.xChange} ${position.y - changes.yChange} ${position.z + boxChange.zChange + changes.zChange}`);
 
       if (position.x > WORLDSIZE || position.z > WORLDSIZE || position.x < - WORLDSIZE || position.z < - WORLDSIZE || position.y > WORLDSIZE || position.y < - WORLDSIZE) {
-        deletePlanet(box);
+        resetBox(box, cameraPositionY);
       }
 
       if (position.x < 3 && position.x > - 3 && position.z < 3 && position.z > - 3 && position.y < 3 && position.y > - 3) {
@@ -341,12 +337,6 @@ const generateNewPlanet = cameraPositionY => {
   planet.classList.add(`planet`);
 
   document.querySelector(`.parent`).appendChild(planet);
-};
-
-const deletePlanet = box => {
-  box.className = ``;
-  box.classList.add(`destroyed`);
-  box.setAttribute(`visible`, `false`);
 };
 
 const resetBox = (box, cameraPositionY) => {
