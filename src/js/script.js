@@ -2,7 +2,7 @@ import setupMenu from '../js/menu.js';
 
 let scoretext, centertext, speedtext, highscoretext, deathElement;
 
-let count = 3;
+let count = 5;
 let timer;
 
 let dead = false;
@@ -98,7 +98,6 @@ const handleTimer = () => {
   if (count === - 1) {
     clearInterval(timer);
     centertext.setAttribute(`value`, ``);
-    console.log(`start`);
 
     const spawnPlanets = setInterval(function() {
       currentPlanets ++;
@@ -160,10 +159,10 @@ const monitorAudio = () => {
 const checkShooting = (changes, volume) => {
   const averageVolume = totalVolume / volumeElements;
 
-  if (volume > averageVolume + 10 && isShooting === false) {
+  if (volume > averageVolume + 8 && isShooting === false) {
     shoot(changes);
     isShooting = true;
-  } else if (volume < averageVolume && isShooting === true) {
+  } else if (volume < averageVolume + 6 && isShooting === true) {
     isShooting = false;
   }
 };
@@ -214,7 +213,7 @@ const update = () => {
         resetBox(box, cameraPositionY);
       }
 
-      if (position.x < 3 && position.x > - 3 && position.z < 3 && position.z > - 3 && position.y < 3 && position.y > - 3) {
+      if (position.x < 5 && position.x > - 5 && position.z < 5 && position.z > - 5 && position.y < 5 && position.y > - 5) {
         box.parentNode.removeChild(box);
         deadHandler();
 
@@ -233,7 +232,7 @@ const update = () => {
           }
 
           //Collision Detection
-          if (bulletposition.x < position.x + 3 &&  bulletposition.x > position.x - 3  && bulletposition.y < position.y + 3 &&  bulletposition.y > position.y - 3 && bulletposition.z < position.z + 3 &&  bulletposition.z > position.z - 3) {
+          if (bulletposition.x < position.x + 5 &&  bulletposition.x > position.x - 5  && bulletposition.y < position.y + 5 &&  bulletposition.y > position.y - 5 && bulletposition.z < position.z + 5 &&  bulletposition.z > position.z - 5) {
             score += scorePerHit;
             scoretext.setAttribute(`value`, score);
             box.classList.add(`hit`);
@@ -251,7 +250,7 @@ const update = () => {
 };
 
 const deadHandler = () => {
-  centertext.setAttribute(`value`, `dood`);
+  centertext.setAttribute(`value`, `YOU DIED`);
   dead = true;
 
   animateDead();
@@ -289,9 +288,9 @@ const generateNewPlanet = cameraPositionY => {
   const planet = document.createElement(`a-box`);
 
   planet.setAttribute(`src`, `#texture`);
-  planet.setAttribute(`width`, 3);
-  planet.setAttribute(`height`, 3);
-  planet.setAttribute(`depth`, 3);
+  planet.setAttribute(`width`, 5);
+  planet.setAttribute(`height`, 5);
+  planet.setAttribute(`depth`, 5);
   planet.setAttribute(`scale`, `0 0 0`);
 
   const vertical = Math.floor(Math.random() * (WORLDSIZE * 2)) - WORLDSIZE;

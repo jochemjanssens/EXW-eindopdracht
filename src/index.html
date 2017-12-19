@@ -21,14 +21,14 @@
       </header>
       <p class="rules">RULES:</p>
       <div class="instruction-flex">
-        <p class="instructions instructions-right">Shout <span class="bold">“PEW PEW”</span> to shoot viruses towards incomming emails</p>
+        <p class="instructions instructions-right">Shout <span class="bold">“PEW PEW”</span> to shoot viruses towards incoming emails</p>
         <p class="instructions instructions-left">Fly in a direction by <span class="bold">rotating</span> your head</p>
       </div>
       <img src="./assets/arrow.svg" alt="arrow" width="50" height="50" class="arrow-right">
       <img src="./assets/arrow.svg" alt="arrow" width="50" height="50" class="arrow-left invisible">
   </div>
   </div>
-  <a-scene stats>
+  <a-scene>
     <a-assets>
         <img id="sky" src="./assets/bg.png" crossorigin="anonymous" />
         <img id="texture" src="./assets/mail.png" crossorigin="anonymous" />
@@ -36,9 +36,9 @@
     <a-camera>
       <a-text class="highscore" value="HIGHSCORE: 0" position=".64 1.5 -4" align="right"></a-text>
       <a-text class="centertext" value="" position="-0.01 0 -.5" align="center"></a-text>
-      <a-text class="score" value="0" position=".03 -.5 -1" scale=".3 .3"></a-text>
+      <a-text class="score" value="0" position=".03 -.48 -1" scale=".3 .3"></a-text>
       <a-text class="scorelabel" value="SCORE" position=".25 -.6 -1" scale=".2 .2"></a-text>
-      <a-text class="speed" value="0" position="-.11 -.5 -1" scale=".3 .3" align="right"></a-text>
+      <a-text class="speed" value="0" position="-.11 -.48 -1" scale=".3 .3" align="right"></a-text>
       <a-text class="speedlabel" value="MBps" position="-.40 -.6 -1" scale=".2 .2"></a-text>
       <a-plane class="spaceship" height= "1" width= "2" position="0 -0.25 -1" src="./assets/spaceship.png" transparent="true"></a-entity>
       <a-plane class="deadoverlay" height= "3" width= "3" position="0 0 -0.1" src="./assets/glass.png" transparent="true" opacity="0.0">></a-entity>
