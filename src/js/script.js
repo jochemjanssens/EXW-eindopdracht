@@ -40,9 +40,12 @@ const init = () => {
 
   checkAudio();
 
-  setTimeout(() => {
+  const waitForAframe = setInterval(function() {
     const vrbutton = document.querySelector(`.a-enter-vr-button`);
-    vrbutton.addEventListener(`mousedown`, startgame);
+    if (vrbutton) {
+      vrbutton.addEventListener(`mousedown`, startgame);
+      clearInterval(waitForAframe);
+    }
   }, 500);
 };
 
