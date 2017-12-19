@@ -269,7 +269,8 @@ const animateDead = () => {
 
 const shoot = direction => {
   const bullet = document.createElement(`a-box`);
-  bullet.setAttribute(`color`, `#FC0D1B`);
+  //bullet.setAttribute(`color`, `#FC0D1B`);
+  bullet.setAttribute(`src`, `#virus`);
 
   bullet.classList.add(`bullet`);
   bullet.dataset.xChange = direction.xChange;
