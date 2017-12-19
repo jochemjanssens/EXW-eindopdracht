@@ -13,9 +13,13 @@ let vrButton;
 
 const init = () => {
 
-  setTimeout(() => {
+
+  const waitForAframe = setInterval(function() {
     vrButton = document.querySelector(`.a-enter-vr-button`);
-    vrButton.classList.add(`invisible`);
+    if (vrButton) {
+      vrButton.classList.add(`invisible`);
+      clearInterval(waitForAframe);
+    }
   }, 500);
 
   rightArrow.addEventListener(`click`, rightArrowClicked);
