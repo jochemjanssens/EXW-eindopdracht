@@ -434,7 +434,7 @@ const calculateBoxChange = direction => {
 const calculateMovement = (cameraPositionX, cameraPositionY) => {
   if (planespeed < MAXSPEED) {
     planespeed += 0.003;
-    speedtext.setAttribute(`value`, `${Math.round(((planespeed - STARTSPEED) / (MAXSPEED - STARTSPEED)) * 1000)}%`);
+    speedtext.setAttribute(`value`, `${Math.round(((planespeed - STARTSPEED) / (MAXSPEED - STARTSPEED)) * 1000)}`);
     if (planespeed >= MAXSPEED) {
       scorePerHit = 2;
     }
