@@ -17,7 +17,7 @@ body {
   z-index: 3;
   color: white;
   /*background-color: rgba(0, 0, 0, .8);*/
-  background-image: url(../assets/bg-mail.png);
+  background-image: url(../assets/bg.png);
   background-repeat: no-repeat;
   background-size: cover;
   width: 100%;
@@ -122,7 +122,7 @@ body {
 }
 
 .blur {
-  background-image: url(../assets/bg-mail.png);
+  background-image: url(../assets/bg.png);
   background-repeat: no-repeat;
   padding: 20px;
   padding: 2rem;

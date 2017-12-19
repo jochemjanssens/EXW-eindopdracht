@@ -12,13 +12,6 @@ En als je iets pew roept dan schiet je.
 - Collision detectie
 - Vliegen in 3D
 
-## Nog mogelijke extras
-- Leaderboard
-- Pickups
-- Vliegtuig customizen
-- Upgrades
-- Visual interface
-
 ## Technologie
 - VR adhv. A-Frame (https://aframe.io/)
 - Web Audio

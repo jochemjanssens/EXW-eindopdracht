@@ -160,10 +160,10 @@ const monitorAudio = () => {
 const checkShooting = (changes, volume) => {
   const averageVolume = totalVolume / volumeElements;
 
-  if (volume > averageVolume + 20 && isShooting === false) {
+  if (volume > averageVolume + 10 && isShooting === false) {
     shoot(changes);
     isShooting = true;
-  } else if (volume < averageVolume + 20 && isShooting === true) {
+  } else if (volume < averageVolume && isShooting === true) {
     isShooting = false;
   }
 };
@@ -225,7 +225,7 @@ const update = () => {
         const bulletposition = bullet.getAttribute(`position`);
         if (bulletposition) {
           if (firstrun) {
-            bullet.setAttribute(`position`, `${bulletposition.x - (bullet.dataset.xChange * 5)} ${bulletposition.y + (bullet.dataset.yChange * 5)} ${bulletposition.z - (bullet.dataset.zChange * 5)}`);
+            bullet.setAttribute(`position`, `${bulletposition.x - (bullet.dataset.xChange * 8)} ${bulletposition.y + (bullet.dataset.yChange * 8)} ${bulletposition.z - (bullet.dataset.zChange * 8)}`);
           }
 
           if (bulletposition.x > WORLDSIZE || bulletposition.z > WORLDSIZE || bulletposition.x < - WORLDSIZE || bulletposition.z < - WORLDSIZE || bulletposition.y > WORLDSIZE || bulletposition.y < - WORLDSIZE) {
@@ -272,7 +272,7 @@ const animateDead = () => {
 
 const shoot = direction => {
   const bullet = document.createElement(`a-box`);
-  bullet.setAttribute(`color`, `#FCFCDB`);
+  bullet.setAttribute(`color`, `#ECF838`);
 
   bullet.setAttribute(`width`, `0.3`);
   bullet.setAttribute(`height`, `0.3`);
@@ -288,9 +288,7 @@ const shoot = direction => {
 const generateNewPlanet = cameraPositionY => {
   const planet = document.createElement(`a-box`);
 
-  const texture = Math.floor(Math.random() * 3) + 1;
-
-  planet.setAttribute(`src`, `#texture${texture}`);
+  planet.setAttribute(`src`, `#texture`);
   planet.setAttribute(`width`, 3);
   planet.setAttribute(`height`, 3);
   planet.setAttribute(`depth`, 3);
