@@ -43,7 +43,7 @@ const init = () => {
   setTimeout(() => {
     const vrbutton = document.querySelector(`.a-enter-vr-button`);
     vrbutton.addEventListener(`mousedown`, startgame);
-  }, 100);
+  }, 500);
 };
 
 const restart = () => {
@@ -157,10 +157,10 @@ const monitorAudio = () => {
 const checkShooting = (changes, volume) => {
   const averageVolume = totalVolume / volumeElements;
 
-  if (volume > averageVolume + 10 && isShooting === false) {
+  if (volume > averageVolume + 20 && isShooting === false) {
     shoot(changes);
     isShooting = true;
-  } else if (volume < averageVolume + 10 && isShooting === true) {
+  } else if (volume < averageVolume + 20 && isShooting === true) {
     isShooting = false;
   }
 };
@@ -269,8 +269,11 @@ const animateDead = () => {
 
 const shoot = direction => {
   const bullet = document.createElement(`a-box`);
-  //bullet.setAttribute(`color`, `#FC0D1B`);
-  bullet.setAttribute(`src`, `#virus`);
+  bullet.setAttribute(`color`, `#FCFCDB`);
+
+  bullet.setAttribute(`width`, `0.3`);
+  bullet.setAttribute(`height`, `0.3`);
+  bullet.setAttribute(`depth`, `0.3`);
 
   bullet.classList.add(`bullet`);
   bullet.dataset.xChange = direction.xChange;
