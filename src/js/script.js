@@ -9,7 +9,7 @@ let dead = false;
 let analyser, frequencyArray;
 let isShooting = false;
 let score = 0;
-const scorePerHit = 1;
+let scorePerHit = 1;
 
 let state = `pregame`;
 
@@ -20,7 +20,8 @@ const MAXSPEED = 3;
 const MAXNUMBERSOFPLANETS = 400;
 
 let currentPlanets = STARTPLANETS;
-let planespeed = 0.5;
+const STARTSPEED = 0.5;
+let planespeed = STARTSPEED;
 
 const init = () => {
   for (let i = 0;i < STARTPLANETS;i ++) {
@@ -49,7 +50,7 @@ const restart = () => {
   dead = false;
   currentPlanets = STARTPLANETS;
   score = 0;
-  planespeed = 0.1;
+  planespeed = STARTSPEED;
 
   deathElement.setAttribute(`material`, `opacity: 0`);
 
@@ -430,11 +431,10 @@ const calculateBoxChange = direction => {
 
 const calculateMovement = (cameraPositionX, cameraPositionY) => {
   if (planespeed < MAXSPEED) {
-    planespeed += 0.005;
-    speedtext.setAttribute(`value`, `${Math.round((planespeed / MAXSPEED) * 100)}%`);
+    planespeed += 0.003;
+    speedtext.setAttribute(`value`, `${Math.round(((planespeed - STARTSPEED) / (MAXSPEED - STARTSPEED)) * 100)}%`);
     if (planespeed >= MAXSPEED) {
-      scorePerHit === 2;
-
+      scorePerHit = 2;
     }
   }
 
