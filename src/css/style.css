@@ -6,7 +6,7 @@ html {
 }
 
 body {
-  font-family: 'Helvetica neue', Helvetica, Arial, sans-serif;
+  font-family: hack, Helvetica, Arial, sans-serif;
   font-size: 1.6rem;
   margin: 2rem;
   position: relative;
@@ -17,7 +17,7 @@ body {
   z-index: 3;
   color: white;
   /*background-color: rgba(0, 0, 0, .8);*/
-  background-image: url(../assets/space.jpg);
+  background-image: url(../assets/bg-mail.png);
   background-repeat: no-repeat;
   background-size: cover;
   width: 100%;
@@ -46,7 +46,13 @@ body {
   font-size: 2.6em;
   font-weight: 100;
   text-align: center;
+  background-color: black;
+  color: #48fb4b;
+  width: 32%;
+  margin: auto;
   margin-top: 5rem;
+  border: 2px solid #48fb4b;
+  padding: 1rem;
 }
 
 .orbit {
@@ -57,7 +63,7 @@ body {
 }
 
 .rules {
-  font-size: 2.6rem;
+  font-size: 3.6rem;
   text-align: center;
   font-weight: 300;
   margin-top: 15%;
@@ -67,6 +73,7 @@ body {
   width: 25rem;
   text-align: center;
   font-weight: 300;
+  font-size: 2rem;
 }
 
 .instruction-flex {
@@ -111,12 +118,11 @@ body {
 .blur-border {
   width: 70%;
   height: 80%;
-  border: 1px solid rgba(255, 255, 255, .7);
   overflow: hidden;
 }
 
 .blur {
-  background-image: url(../assets/space.jpg);
+  background-image: url(../assets/bg-mail.png);
   background-repeat: no-repeat;
   padding: 20px;
   padding: 2rem;
@@ -124,8 +130,8 @@ body {
   height: 81%;
   position: absolute;
   z-index: -99;
-  border: 1px solid white;
-  filter: blur(10px);
+  border: 1px solid #48fb4b;
+  /*filter: blur(3px);*/
 }
 
 .widget {
@@ -163,6 +169,12 @@ body {
 
   .titel {
     margin-top: 6vh;
+    width: 64%;
+    font-size: 2rem;
+  }
+
+  .playTitle {
+    width: 77%;
   }
 
   .instruction-flex {
