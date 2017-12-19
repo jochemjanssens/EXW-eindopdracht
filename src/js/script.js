@@ -10,11 +10,13 @@ let analyser, frequencyArray;
 let isShooting = false;
 let score = 0;
 
-const PLANETSPAWNSPEED = 10;
+let state = `pregame`;
+
+const PLANETSPAWNSPEED = 5;
 const STARTPLANETS = 50;
 const WORLDSIZE = 200;
 const MAXSPEED = 3;
-const MAXNUMBERSOFPLANETS = 200;
+const MAXNUMBERSOFPLANETS = 400;
 
 let currentPlanets = STARTPLANETS;
 let planespeed = 0.5;
@@ -78,6 +80,8 @@ const soundAllowed = stream => {
   audioStream.connect(analyser);
   analyser.fftSize = 1024;
   frequencyArray = new Uint8Array(analyser.frequencyBinCount);
+
+  monitorAudio();
 };
 
 const soundNotAllowed = error => {
@@ -96,7 +100,7 @@ const handleTimer = () => {
         clearInterval(spawnPlanets);
       }
     }, PLANETSPAWNSPEED);
-
+    state = `play`;
     update();
   } else if (count === 0) {
     centertext.setAttribute(`value`, `go`);
@@ -106,31 +110,55 @@ const handleTimer = () => {
   count --;
 };
 
+
 let totalVolume = 0;
 let volumeElements = 0;
 
-const checkShooting = (changes, cameraPositionX, cameraPositionY) => {
-  if (analyser) {
-    analyser.getByteFrequencyData(frequencyArray);
+const monitorAudio = () => {
+  if (state === `pregame`) {
+    if (analyser) {
+      analyser.getByteFrequencyData(frequencyArray);
 
-    let values = 0;
-    const length = frequencyArray.length;
-    for (let i = 0;i < length;i ++) {
-      values += frequencyArray[i];
+      let values = 0;
+      const length = frequencyArray.length;
+      for (let i = 0;i < length;i ++) {
+        values += frequencyArray[i];
+      }
+
+      const volume = values / length;
+      totalVolume += volume;
+      volumeElements ++;
+
+      requestAnimationFrame(monitorAudio);
     }
+  } else if (state === `play`) {
+    if (analyser) {
+      analyser.getByteFrequencyData(frequencyArray);
 
-    const volume = values / length;
-    totalVolume += volume;
-    volumeElements ++;
+      let values = 0;
+      const length = frequencyArray.length;
+      for (let i = 0;i < length;i ++) {
+        values += frequencyArray[i];
+      }
 
-    const averageVolume = totalVolume / volumeElements;
+      const volume = values / length;
+      totalVolume += volume;
+      volumeElements ++;
 
-    if (volume > averageVolume + 10 && isShooting === false) {
-      shoot(changes, cameraPositionX, cameraPositionY);
-      isShooting = true;
-    } else if (volume < averageVolume + 10 && isShooting === true) {
-      isShooting = false;
+      return volume;
     }
+  }
+};
+
+
+const checkShooting = (changes, cameraPositionX, cameraPositionY, volume) => {
+  const averageVolume = totalVolume / volumeElements;
+
+  if (volume > averageVolume + 10 && isShooting === false) {
+    shoot(changes, cameraPositionX, cameraPositionY);
+    isShooting = true;
+  } else if (volume < averageVolume + 10 && isShooting === true) {
+    isShooting = false;
   }
 };
 
@@ -151,7 +179,9 @@ const update = () => {
     }
   }
 
-  checkShooting(changes, cameraPositionX, cameraPositionY);
+  const volume = monitorAudio();
+
+  checkShooting(changes, cameraPositionX, cameraPositionY, volume);
 
   let firstrun = true;
 
