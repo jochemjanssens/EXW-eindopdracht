@@ -1,6 +1,6 @@
 import setupMenu from '../js/menu.js';
 
-let scoretext, centertext, speedtext, highscoretext;
+let scoretext, centertext, speedtext, highscoretext, deathElement;
 
 let count = 7;
 let timer;
@@ -10,7 +10,7 @@ let analyser, frequencyArray;
 let isShooting = false;
 let score = 0;
 
-const PLANETSPAWNSPEED = 100;
+const PLANETSPAWNSPEED = 10;
 const STARTPLANETS = 50;
 const WORLDSIZE = 200;
 const MAXSPEED = 3;
@@ -19,37 +19,16 @@ const MAXNUMBERSOFPLANETS = 200;
 let currentPlanets = STARTPLANETS;
 let planespeed = 0.5;
 
-const restart = () => {
-  count = 3;
-  dead = false;
-  currentPlanets = STARTPLANETS;
-  score = 0;
-  planespeed = 0.1;
-
-  document.querySelectorAll(`.bullet`).forEach(bullet => {
-    bullet.parentNode.removeChild(bullet);
-  });
-
-  startgame();
-};
-
 const init = () => {
-
   for (let i = 0;i < STARTPLANETS;i ++) {
     generateNewPlanet();
   }
-
-  const spawnPlanets = setInterval(function() {
-    currentPlanets ++;
-    if (MAXNUMBERSOFPLANETS < currentPlanets) {
-      clearInterval(spawnPlanets);
-    }
-  }, PLANETSPAWNSPEED);
 
   scoretext = document.querySelector(`.score`);
   centertext = document.querySelector(`.centertext`);
   speedtext = document.querySelector(`.speed`);
   highscoretext = document.querySelector(`.highscore`);
+  deathElement = document.querySelector(`.deadoverlay`);
 
   setupMenu();
 
@@ -60,7 +39,23 @@ const init = () => {
   setTimeout(() => {
     const vrbutton = document.querySelector(`.a-enter-vr-button`);
     vrbutton.addEventListener(`mousedown`, startgame);
-  }, 1000);
+  }, 100);
+};
+
+const restart = () => {
+  count = 3;
+  dead = false;
+  currentPlanets = STARTPLANETS;
+  score = 0;
+  planespeed = 0.1;
+
+  deathElement.setAttribute(`material`, `opacity: 0`);
+
+  document.querySelectorAll(`.bullet`).forEach(bullet => {
+    bullet.parentNode.removeChild(bullet);
+  });
+
+  startgame();
 };
 
 const startgame = () => {
@@ -94,6 +89,14 @@ const handleTimer = () => {
     clearInterval(timer);
     centertext.setAttribute(`value`, ``);
     console.log(`start`);
+
+    const spawnPlanets = setInterval(function() {
+      currentPlanets ++;
+      if (MAXNUMBERSOFPLANETS < currentPlanets) {
+        clearInterval(spawnPlanets);
+      }
+    }, PLANETSPAWNSPEED);
+
     update();
   } else if (count === 0) {
     centertext.setAttribute(`value`, `go`);
@@ -140,7 +143,12 @@ const update = () => {
 
   const numberOfPlanets = document.querySelectorAll(`.planet`).length;
   if (numberOfPlanets < currentPlanets) {
-    generateNewPlanet(cameraPositionY);
+    const poolPlanet = document.querySelector(`.destroyed`);
+    if (poolPlanet) {
+      resetBox(poolPlanet, cameraPositionY);
+    } else {
+      generateNewPlanet(cameraPositionY);
+    }
   }
 
   checkShooting(changes, cameraPositionX, cameraPositionY);
@@ -157,7 +165,7 @@ const update = () => {
           const newScale = scale.x - 0.2;
           box.setAttribute(`scale`, `${newScale} ${newScale} ${newScale}`);
         } else {
-          resetBox(box, cameraPositionY);
+          deletePlanet(box);
         }
       //Planeet spawnen
       } else if (scale.x <= 1) {
@@ -172,7 +180,7 @@ const update = () => {
       box.setAttribute(`position`, `${position.x + boxChange.xChange + changes.xChange} ${position.y - changes.yChange} ${position.z + boxChange.zChange + changes.zChange}`);
 
       if (position.x > WORLDSIZE || position.z > WORLDSIZE || position.x < - WORLDSIZE || position.z < - WORLDSIZE || position.y > WORLDSIZE || position.y < - WORLDSIZE) {
-        resetBox(box, cameraPositionY);
+        deletePlanet(box);
       }
 
       if (position.x < 3 && position.x > - 3 && position.z < 3 && position.z > - 3 && position.y < 3 && position.y > - 3) {
@@ -186,7 +194,7 @@ const update = () => {
         const bulletposition = bullet.getAttribute(`position`);
         if (bulletposition) {
           if (firstrun) {
-            bullet.setAttribute(`position`, `${bulletposition.x - (bullet.dataset.xChange * 8)} ${bulletposition.y + (bullet.dataset.yChange * 8)} ${bulletposition.z - (bullet.dataset.zChange * 8)}`);
+            bullet.setAttribute(`position`, `${bulletposition.x - (bullet.dataset.xChange * 5)} ${bulletposition.y + (bullet.dataset.yChange * 5)} ${bulletposition.z - (bullet.dataset.zChange * 5)}`);
           }
 
           if (bulletposition.x > WORLDSIZE || bulletposition.z > WORLDSIZE || bulletposition.x < - WORLDSIZE || bulletposition.z < - WORLDSIZE || bulletposition.y > WORLDSIZE || bulletposition.y < - WORLDSIZE) {
@@ -222,7 +230,6 @@ const deadHandler = () => {
 let counter  = 0;
 
 const animateDead = () => {
-  const deathElement = document.querySelector(`.deadoverlay`);
   if (counter > 60) {
     restart();
   } else {
@@ -235,11 +242,11 @@ const animateDead = () => {
 
 const shoot = (direction, cameraPositionX, cameraPositionY) => {
   const bullet = document.createElement(`a-cylinder`);
-  bullet.setAttribute(`position`, `0 -1 0`);
+  bullet.setAttribute(`position`, `0 -5 0`);
   bullet.setAttribute(`color`, `#FC0D1B`);
-  bullet.setAttribute(`radius`, `0.3`);
-  bullet.setAttribute(`height`, `50`);
-  bullet.setAttribute(`rotation`, `${- 90 + (cameraPositionX / 2)} ${cameraPositionY} 0`);
+  bullet.setAttribute(`radius`, `0.1`);
+  bullet.setAttribute(`height`, `20`);
+  bullet.setAttribute(`rotation`, `${90 + cameraPositionX} ${cameraPositionY} 0`);
 
   bullet.classList.add(`bullet`);
   bullet.dataset.xChange = direction.xChange;
@@ -304,6 +311,12 @@ const generateNewPlanet = cameraPositionY => {
   planet.classList.add(`planet`);
 
   document.querySelector(`.parent`).appendChild(planet);
+};
+
+const deletePlanet = box => {
+  box.className = ``;
+  box.classList.add(`destroyed`);
+  box.setAttribute(`visible`, `false`);
 };
 
 const resetBox = (box, cameraPositionY) => {
