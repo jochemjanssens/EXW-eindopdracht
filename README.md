@@ -1,7 +1,7 @@
 # Eindopdracht EXW
 
 ## Concept
-Een VR-straaljager game waar je vliegt door je hoofd te bewegen. Je vliegt naar waar je kijkt.
+Een VR-vlieg game waar je vliegt door je hoofd te bewegen. Je vliegt naar waar je kijkt.
 En als je iets pew roept dan schiet je.
 
 ## Features

@@ -154,11 +154,11 @@ const monitorAudio = () => {
 };
 
 
-const checkShooting = (changes, cameraPositionX, cameraPositionY, volume) => {
+const checkShooting = (changes, volume) => {
   const averageVolume = totalVolume / volumeElements;
 
   if (volume > averageVolume + 10 && isShooting === false) {
-    shoot(changes, cameraPositionX, cameraPositionY);
+    shoot(changes);
     isShooting = true;
   } else if (volume < averageVolume + 10 && isShooting === true) {
     isShooting = false;
@@ -179,7 +179,7 @@ const update = () => {
 
   const volume = monitorAudio();
 
-  checkShooting(changes, cameraPositionX, cameraPositionY, volume);
+  checkShooting(changes, volume);
 
   let firstrun = true;
 
@@ -267,13 +267,9 @@ const animateDead = () => {
   }
 };
 
-const shoot = (direction, cameraPositionX, cameraPositionY) => {
-  const bullet = document.createElement(`a-cylinder`);
-  bullet.setAttribute(`position`, `0 -5 0`);
+const shoot = direction => {
+  const bullet = document.createElement(`a-box`);
   bullet.setAttribute(`color`, `#FC0D1B`);
-  bullet.setAttribute(`radius`, `0.1`);
-  bullet.setAttribute(`height`, `20`);
-  bullet.setAttribute(`rotation`, `${90 + cameraPositionX} ${cameraPositionY} 0`);
 
   bullet.classList.add(`bullet`);
   bullet.dataset.xChange = direction.xChange;
@@ -288,7 +284,6 @@ const generateNewPlanet = cameraPositionY => {
   const texture = Math.floor(Math.random() * 3) + 1;
 
   planet.setAttribute(`src`, `#texture${texture}`);
-  //planet.setAttribute(`radius`, 3);
   planet.setAttribute(`width`, 3);
   planet.setAttribute(`height`, 3);
   planet.setAttribute(`depth`, 3);
