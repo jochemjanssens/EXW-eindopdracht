@@ -205,3 +205,21 @@ body {
     left: 1%;
   }
 }
+
+@media (max-height: 280px) {
+
+  .rules {
+    margin-top: 2rem;
+    font-size: 2rem;
+  }
+
+  .titel {
+    font-size: 3rem;
+  }
+
+  .a-enter-vr-button {
+    right: calc(50% - 45px);
+    position: absolute;
+    bottom: 3rem;
+  }
+}
