@@ -9,6 +9,7 @@ let dead = false;
 let analyser, frequencyArray;
 let isShooting = false;
 let score = 0;
+const scorePerHit = 1;
 
 let state = `pregame`;
 
@@ -103,7 +104,7 @@ const handleTimer = () => {
     state = `play`;
     update();
   } else if (count === 0) {
-    centertext.setAttribute(`value`, `go`);
+    centertext.setAttribute(`value`, `GO`);
   } else {
     centertext.setAttribute(`value`, count);
   }
@@ -233,8 +234,7 @@ const update = () => {
 
           //Collision Detection
           if (bulletposition.x < position.x + 3 &&  bulletposition.x > position.x - 3  && bulletposition.y < position.y + 3 &&  bulletposition.y > position.y - 3 && bulletposition.z < position.z + 3 &&  bulletposition.z > position.z - 3) {
-            console.log(`raak`);
-            score += 1;
+            score += scorePerHit;
             scoretext.setAttribute(`value`, score);
             box.classList.add(`hit`);
             bullet.parentNode.removeChild(bullet);
@@ -442,6 +442,10 @@ const calculateMovement = (cameraPositionX, cameraPositionY) => {
   if (planespeed < MAXSPEED) {
     planespeed += 0.005;
     speedtext.setAttribute(`value`, `${Math.round((planespeed / MAXSPEED) * 100)}%`);
+    if (planespeed >= MAXSPEED) {
+      scorePerHit === 2;
+
+    }
   }
 
   let xChange = 0;
