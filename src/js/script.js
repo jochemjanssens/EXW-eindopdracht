@@ -2,7 +2,7 @@ import setupMenu from '../js/menu.js';
 
 let scoretext, centertext, speedtext, highscoretext, deathElement;
 
-let count = 7;
+let count = 3;
 let timer;
 
 let dead = false;
@@ -14,10 +14,10 @@ const scorePerHit = 1;
 let state = `pregame`;
 
 const PLANETSPAWNSPEED = 5;
-const STARTPLANETS = 50;
+const STARTPLANETS = 40;
 const WORLDSIZE = 200;
 const MAXSPEED = 3;
-const MAXNUMBERSOFPLANETS = 400;
+const MAXNUMBERSOFPLANETS = 150;
 
 let currentPlanets = STARTPLANETS;
 let planespeed = 0.5;
@@ -61,7 +61,7 @@ const restart = () => {
 };
 
 const startgame = () => {
-  count = 7;
+  count = 3;
 
   timer = setInterval(function() {
     handleTimer(count);
@@ -282,12 +282,15 @@ const shoot = (direction, cameraPositionX, cameraPositionY) => {
 };
 
 const generateNewPlanet = cameraPositionY => {
-  const planet = document.createElement(`a-sphere`);
+  const planet = document.createElement(`a-box`);
 
   const texture = Math.floor(Math.random() * 3) + 1;
 
   planet.setAttribute(`src`, `#texture${texture}`);
-  planet.setAttribute(`radius`, 3);
+  //planet.setAttribute(`radius`, 3);
+  planet.setAttribute(`width`, 3);
+  planet.setAttribute(`height`, 3);
+  planet.setAttribute(`depth`, 3);
   planet.setAttribute(`scale`, `0 0 0`);
 
   const vertical = Math.floor(Math.random() * (WORLDSIZE * 2)) - WORLDSIZE;
